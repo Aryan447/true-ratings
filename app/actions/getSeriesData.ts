@@ -50,7 +50,8 @@ async function getImdbSeasonRatings(imdbID: string, season: number): Promise<{ [
 
         if (Array.isArray(episodes)) {
             episodes.forEach((ep: any) => {
-                const epNum = ep.episodeNumber?.toString();
+                // IMDb field can be 'episodeNumber' or just 'episode'
+                const epNum = ep.episodeNumber?.toString() || ep.episode?.toString();
                 // aggregateRating might be nested or direct
                 const rating = ep.aggregateRating || ep.rating?.aggregateRating || 0;
                 if (epNum && rating) {
