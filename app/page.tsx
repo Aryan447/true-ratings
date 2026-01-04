@@ -1,10 +1,11 @@
 "use client";
 import { useState, useEffect } from "react";
-import SearchHero from "./components/SearchHero";
+import SearchOverlay from "./components/SearchOverlay";
 import SeriesInfo from "./components/SeriesInfo";
 import EpisodeGrid from "./components/EpisodeGrid";
 import RatingChart from "./components/RatingChart";
-import { getSeriesData } from "./actions/getSeriesData";
+import TrendingRow from "./components/TrendingRow";
+import { getSeriesData, getTrendingSeries } from "./actions/getSeriesData";
 
 interface Episode {
   Episode: string;
@@ -14,6 +15,10 @@ interface Episode {
   season?: number;
 }
 
+// Curated IDs for Trending Sections
+const WORLD_IDS = [82, 169, 2993, 15299, 16121, 1371, 66, 431, 305]; // GoT, BB, Stranger Things, The Boys, Succession, Westworld, Big Bang, Friends, Black Mirror
+const INDIA_IDS = [36082, 39537, 42878, 50824, 47353, 33368, 62237]; // Sacred Games, Mirzapur, Family Man, Scam 1992, Panchayat, Made in Heaven, Farzi
+
 export default function Home() {
   const [series, setSeries] = useState<any>(null);
   const [seasons, setSeasons] = useState<{ [key: number]: Episode[] }>({});
@@ -21,6 +26,22 @@ export default function Home() {
   const [globalBest, setGlobalBest] = useState<{ season: number; ep: Episode } | null>(null);
   const [globalWorst, setGlobalWorst] = useState<{ season: number; ep: Episode } | null>(null);
   const [hasSearched, setHasSearched] = useState(false);
+
+  const [worldTrending, setWorldTrending] = useState<any[]>([]);
+  const [indiaTrending, setIndiaTrending] = useState<any[]>([]);
+
+  // Fetch Trending Data on Mount
+  useEffect(() => {
+    const fetchTrending = async () => {
+      const [world, india] = await Promise.all([
+        getTrendingSeries(WORLD_IDS),
+        getTrendingSeries(INDIA_IDS)
+      ]);
+      setWorldTrending(world);
+      setIndiaTrending(india);
+    };
+    fetchTrending();
+  }, []);
 
   // Focus on top of page when results load
   useEffect(() => {
@@ -46,39 +67,36 @@ export default function Home() {
         setGlobalWorst(data.WorstEp);
       } else {
         alert("Series not found!");
-        setHasSearched(false);
       }
     } catch (e) {
       console.error(e);
       alert("Error fetching data");
-      setHasSearched(false);
     }
     setLoading(false);
   };
 
   return (
     <main className="min-h-screen py-8 px-4 flex flex-col items-center">
-      {/* Search Header - shows centered if no search, otherwise minimal at top (could act as reset) */}
-      {!hasSearched ? (
-        <SearchHero onSearch={fetchSeries} loading={loading} />
-      ) : (
-        <div className="w-full max-w-6xl mx-auto mb-8 flex justify-between items-center animate-fade-in">
-          <h1
-            className="text-2xl font-bold cursor-pointer text-gradient"
-            onClick={() => { setSeries(null); setHasSearched(false); }}
-          >
-            True Ratings
-          </h1>
-          <button
-            onClick={() => { setSeries(null); setHasSearched(false); }}
-            className="text-sm text-gray-400 hover:text-white transition-colors"
-          >
-            Start Over
-          </button>
+
+      <SearchOverlay
+        onSearch={fetchSeries}
+        loading={loading}
+        hasSearched={hasSearched}
+      />
+
+      {/* Show Trending Rows only if NOT searching/viewing results */}
+      {!hasSearched && !loading && (
+        <div className="w-full animate-fade-in mt-10">
+          {worldTrending.length > 0 && (
+            <TrendingRow title="Trending Worldwide" items={worldTrending} onSelect={fetchSeries} />
+          )}
+          {indiaTrending.length > 0 && (
+            <TrendingRow title="Trending in India" items={indiaTrending} onSelect={fetchSeries} />
+          )}
         </div>
       )}
 
-      {loading && (
+      {loading && hasSearched && (
         <div className="fixed inset-0 flex items-center justify-center bg-black/50 backdrop-blur-sm z-50">
           <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-yellow-500"></div>
         </div>
@@ -102,8 +120,8 @@ export default function Home() {
         </div>
       )}
 
-      <footer className="mt-20 text-gray-600 text-sm">
-        Data provided by IMDb
+      <footer className="mt-20 text-gray-600 text-sm pb-8">
+        Data provided by TVMaze
       </footer>
     </main>
   );
