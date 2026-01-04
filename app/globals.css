@@ -7,6 +7,12 @@
   --card-border: rgba(255, 255, 255, 0.08);
   --primary-gradient: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
   --accent-glow: rgba(255, 165, 0, 0.15);
+
+  /* Retro Variables */
+  --cinema-gold: #c5a059;
+  --cinema-red: #8a0c0c;
+  --marquee-bulb-on: #fffec4;
+  --marquee-bulb-off: #554433;
 }
 
 @theme inline {
@@ -84,6 +90,48 @@ body {
   z-index: 9999;
   background-size: 100% 2px, 3px 100%;
   pointer-events: none;
+}
+
+/* Retro Marquee Effect */
+.marquee-text {
+  text-transform: uppercase;
+  text-shadow: 0 0 5px var(--cinema-gold), 2px 2px 0px #000;
+  letter-spacing: 0.1em;
+}
+
+.cinema-border {
+  border: 4px double var(--cinema-gold);
+  box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.8), 0 0 10px rgba(197, 160, 89, 0.3);
+  background: #110202;
+}
+
+/* Lightbulbs animation */
+@keyframes blink {
+
+  0%,
+  100% {
+    opacity: 1;
+    box-shadow: 0 0 10px var(--marquee-bulb-on);
+  }
+
+  50% {
+    opacity: 0.5;
+    box-shadow: 0 0 2px var(--marquee-bulb-off);
+  }
+}
+
+.bulb {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--marquee-bulb-on);
+  display: inline-block;
+  margin: 4px;
+  animation: blink 2s infinite alternate;
+}
+
+.text-shadow-retro {
+  text-shadow: 4px 4px 0px #000;
 }
 
 /* Premium Glass Effect */
