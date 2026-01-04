@@ -20,7 +20,7 @@ export default function SearchOverlay({ onSearch, loading, hasSearched }: Search
     useEffect(() => {
         if (query.length < 2) {
             setResults([]);
-            // eslint-disable-next-line react-hooks/exhaustive-deps
+
             setShowDropdown(false);
             return;
         }

@@ -38,7 +38,7 @@ export default function SeriesInfo({ series, globalBest, globalWorst }: SeriesIn
                     </div>
 
                     <p className="text-[#f0e6d2] mb-6 max-w-2xl leading-relaxed text-xl italic opacity-90">
-                        "{series.Plot}"
+                        &quot;{series.Plot}&quot;
                     </p>
 
                     <div className="flex flex-wrap gap-4 mb-8">
@@ -54,7 +54,7 @@ export default function SeriesInfo({ series, globalBest, globalWorst }: SeriesIn
                             <div className="bg-[#0f1a0f] px-6 py-4 border-2 border-[#1a4a1a] flex flex-col justify-center">
                                 <span className="block text-xs text-[#2a8a2a] uppercase tracking-widest font-bold mb-1">Masterpiece</span>
                                 <div className="font-bold text-[#c5e6c5] truncate max-w-[150px]" title={globalBest.ep.Title}>
-                                    "{globalBest.ep.Title}"
+                                    &quot;{globalBest.ep.Title}&quot;
                                 </div>
                                 <span className="text-xl font-bold text-[#2a8a2a]">{globalBest.ep.imdbRating}</span>
                             </div>
