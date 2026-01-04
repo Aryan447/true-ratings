@@ -14,14 +14,14 @@ interface EpisodeGridProps {
     globalWorst: { season: number; ep: Episode } | null;
 }
 
-const getColor = (r: number) => {
-    if (r >= 9.0) return "bg-green-500 shadow-[0_0_15px_-3px_rgba(34,197,94,0.6)]";
-    if (r >= 8.5) return "bg-emerald-500";
-    if (r >= 8.0) return "bg-green-600";
-    if (r >= 7.5) return "bg-yellow-500";
-    if (r >= 7.0) return "bg-yellow-600";
-    if (r >= 6.0) return "bg-orange-600";
-    return "bg-red-600";
+const getColorStyle = (r: number) => {
+    if (r >= 9.0) return "border-[#00ff00] text-[#00ff00] shadow-[0_0_10px_#00ff00]";
+    if (r >= 8.5) return "border-[#00cc00] text-[#00cc00]";
+    if (r >= 8.0) return "border-[#009900] text-[#009900]";
+    if (r >= 7.5) return "border-[#ffff00] text-[#ffff00]";
+    if (r >= 7.0) return "border-[#cccc00] text-[#cccc00]";
+    if (r >= 6.0) return "border-[#ff6600] text-[#ff6600]";
+    return "border-[#ff0000] text-[#ff0000]";
 };
 
 export default function EpisodeGrid({ seasons, globalBest, globalWorst }: EpisodeGridProps) {
@@ -31,15 +31,15 @@ export default function EpisodeGrid({ seasons, globalBest, globalWorst }: Episod
     };
 
     return (
-        <div className="space-y-8 w-full max-w-6xl mx-auto">
+        <div className="space-y-8 w-full max-w-6xl mx-auto font-mono">
             {Object.entries(seasons).map(([season, episodes]) => {
                 const avg = getSeasonAvg(episodes);
                 return (
-                    <div key={season} className="glass rounded-xl p-5 md:p-6 transition-all hover:bg-white/[0.07]">
-                        <div className="flex justify-between items-center mb-4 pb-2 border-b border-white/5">
-                            <h3 className="text-xl font-bold text-white">Season {season}</h3>
-                            <div className="px-3 py-1 rounded bg-black/40 text-sm font-mono text-yellow-400 border border-white/5">
-                                Avg: {avg}
+                    <div key={season} className="border-t-2 border-dashed border-[var(--foreground)] pt-6">
+                        <div className="flex justify-between items-center mb-4 pb-2">
+                            <h3 className="text-xl font-bold text-[var(--neon-pink)] uppercase tracking-widest">{">"} Season_0{season}</h3>
+                            <div className="px-3 py-1 bg-black text-sm font-bold text-[var(--neon-yellow)] border border-[var(--neon-yellow)]">
+                                AVG_RATING: {avg}
                             </div>
                         </div>
 
@@ -53,25 +53,24 @@ export default function EpisodeGrid({ seasons, globalBest, globalWorst }: Episod
                                 return (
                                     <div
                                         key={i}
-                                        className="relative group cursor-default"
+                                        className="relative group cursor-pointer"
                                     >
                                         <div
                                             className={`
-                        aspect-square rounded-md flex flex-col items-center justify-center text-center
-                        transition-transform duration-200 ease-out group-hover:scale-110 z-0 group-hover:z-10
-                        ${invalid ? "bg-gray-800 text-gray-500" : `text-white font-bold ${getColor(rating)}`}
-                        ${isBest ? "ring-2 ring-white ring-offset-2 ring-offset-black scale-105 z-10" : ""}
+                        aspect-square flex flex-col items-center justify-center text-center
+                        border-2 bg-black hover:bg-white/10 transition-colors
+                        ${invalid ? "border-gray-700 text-gray-500" : getColorStyle(rating)}
+                        ${isBest ? "animate-pulse bg-[#00ff00]/10" : ""}
                       `}
                                         >
-                                            <span className="text-xs opacity-80 font-normal">E{ep.Episode}</span>
-                                            <span className="text-lg leading-none">{invalid ? "-" : rating.toFixed(1)}</span>
+                                            <span className="text-xs font-bold mb-1">E{ep.Episode}</span>
+                                            <span className="text-lg font-bold">{invalid ? "-" : rating.toFixed(1)}</span>
                                         </div>
 
                                         {/* Tooltip */}
-                                        <div className="absolute opacity-0 group-hover:opacity-100 transition-opacity duration-200 bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 bg-black/90 backdrop-blur-md border border-white/20 p-3 rounded-lg text-xs z-50 pointer-events-none shadow-2xl">
-                                            <div className="font-bold text-white mb-1 line-clamp-2">{ep.Title}</div>
-                                            <div className="text-gray-400">Episode: {ep.Episode}</div>
-                                            {!invalid && <div className="text-yellow-400">Rating: {rating}</div>}
+                                        <div className="absolute opacity-0 group-hover:opacity-100 transition-opacity duration-0 bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 bg-black border-2 border-[var(--neon-cyan)] p-2 z-50 pointer-events-none shadow-[0_0_20px_rgba(0,255,255,0.4)]">
+                                            <div className="font-bold text-[var(--neon-cyan)] mb-1 uppercase tracking-tighter line-clamp-2">{ep.Title}</div>
+                                            <div className="text-xs text-white uppercase">Episode: {ep.Episode}</div>
                                         </div>
                                     </div>
                                 );
