@@ -29,6 +29,13 @@ interface Translations {
     checkArchives: string;
     highestRated: string;
     lowestRated: string;
+    websiteTitle: string;
+    websiteSubtitle: string;
+    switchToModern: string;
+    switchToRetro: string;
+    nowShowing: string;
+    trueRatingsCinema: string;
+    insertTitle: string;
 }
 
 const translations: Record<Language, Translations> = {
@@ -40,7 +47,7 @@ const translations: Record<Language, Translations> = {
         trendingIndia: "Trending in India",
         loading: "Loading...",
         dataProvidedBy: "Data provided by TVMaze & IMDb",
-        searchPlaceholder: "Search for a TV Series...",
+        searchPlaceholder: "Search for a series...",
         act: "Act",
         scene: "SCENE",
         best: "Best",
@@ -57,6 +64,13 @@ const translations: Record<Language, Translations> = {
         checkArchives: "CHECK ARCHIVES",
         highestRated: "Highest Rated",
         lowestRated: "Lowest Rated",
+        websiteTitle: "True Ratings",
+        websiteSubtitle: "Discover the real ratings of every episode.",
+        switchToModern: "Switch to Modern",
+        switchToRetro: "Switch to Retro",
+        nowShowing: "NOW SHOWING",
+        trueRatingsCinema: "TRUE RATINGS CINEMA",
+        insertTitle: "INSERT TITLE HERE...",
     },
     hi: {
         season: "सीज़न",
@@ -66,7 +80,7 @@ const translations: Record<Language, Translations> = {
         trendingIndia: "भारत में लोकप्रिय",
         loading: "लोड हो रहा है...",
         dataProvidedBy: "TVMaze और IMDb द्वारा डेटा",
-        searchPlaceholder: "tv सीरीज खोजें...",
+        searchPlaceholder: "सीरीज खोजें...",
         act: "अंक",
         scene: "दृश्य",
         best: "सर्वश्रेष्ठ",
@@ -83,6 +97,13 @@ const translations: Record<Language, Translations> = {
         checkArchives: "अभिलेख देखें",
         highestRated: "सबसे ज्यादा रेटेड",
         lowestRated: "सबसे कम रेटेड",
+        websiteTitle: "True Ratings",
+        websiteSubtitle: "हर एपिसोड की असली रेटिंग खोजें।",
+        switchToModern: "आधुनिक मोड में बदलें",
+        switchToRetro: "रेट्रो मोड में बदलें",
+        nowShowing: "अब दिखा रहा है",
+        trueRatingsCinema: "ट्रू रेटिंग्स सिनेमा",
+        insertTitle: "शीर्षक यहाँ डालें...",
     },
 };
 

@@ -3,6 +3,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { SearchResult } from "../types";
 import { searchSeries } from "../actions/getSeriesData";
 import { useTheme } from "../context/ThemeContext";
+import { useLanguage } from "../context/LanguageContext";
 
 interface SearchOverlayProps {
     onSearch: (query: string) => void;
@@ -12,6 +13,7 @@ interface SearchOverlayProps {
 
 export default function SearchOverlay({ onSearch, loading, hasSearched }: SearchOverlayProps) {
     const { theme, toggleTheme } = useTheme();
+    const { t } = useLanguage();
     const [query, setQuery] = useState("");
     const [results, setResults] = useState<SearchResult[]>([]);
     const [showDropdown, setShowDropdown] = useState(false);
@@ -63,7 +65,7 @@ export default function SearchOverlay({ onSearch, loading, hasSearched }: Search
                 className={`fixed top-4 right-4 z-[100] px-4 py-2 rounded-full font-bold text-xs uppercase transition-all 
                     ${isRetro ? 'bg-yellow-500 text-black border-2 border-red-500 hover:scale-105' : 'bg-white/10 text-white backdrop-blur-md hover:bg-white/20'}`}
             >
-                {isRetro ? "Switch to Modern" : "Switch to Retro"}
+                {isRetro ? t.switchToModern : t.switchToRetro}
             </button>
 
             {!hasSearched && (
@@ -73,9 +75,9 @@ export default function SearchOverlay({ onSearch, loading, hasSearched }: Search
                         <div className="mb-10 text-center relative p-8 border-4 border-yellow-500 bg-black shadow-[0_0_30px_rgba(239,68,68,0.5)]">
                             <div className="absolute top-0 left-0 w-full h-full border border-dashed border-red-500 opacity-50 pointer-events-none"></div>
                             <h1 className="text-5xl md:text-7xl font-bold text-yellow-500 tracking-widest font-mono uppercase drop-shadow-md">
-                                NOW SHOWING
+                                {t.nowShowing}
                             </h1>
-                            <p className="text-red-500 mt-2 font-mono tracking-widest">TRUE RATINGS CINEMA</p>
+                            <p className="text-red-500 mt-2 font-mono tracking-widest">{t.trueRatingsCinema}</p>
 
                             {/* Marquee Bulbs */}
                             <div className="absolute -top-3 left-10 w-4 h-4 rounded-full bg-yellow-200 animate-pulse shadow-[0_0_10px_yellow]"></div>
@@ -87,10 +89,10 @@ export default function SearchOverlay({ onSearch, loading, hasSearched }: Search
                         /* Modern Header */
                         <>
                             <h1 className="text-6xl md:text-8xl font-bold mb-6 tracking-tighter bg-clip-text text-transparent bg-gradient-to-b from-white to-gray-500 animate-fade-in">
-                                True Ratings
+                                {t.websiteTitle}
                             </h1>
                             <p className="text-gray-400 mb-10 text-xl font-light max-w-lg get-started animate-fade-in">
-                                Discover the real ratings of every episode.
+                                {t.websiteSubtitle}
                             </p>
                         </>
                     )}
@@ -124,7 +126,7 @@ export default function SearchOverlay({ onSearch, loading, hasSearched }: Search
                             ${isRetro ? 'text-yellow-500 placeholder-red-900 font-mono text-xl px-6 py-4' : 'text-white placeholder-gray-500 text-xl px-8 py-5'}
                             ${hasSearched && !isRetro ? 'px-4 py-3 text-lg' : ''}
                         `}
-                        placeholder={isRetro ? "INSERT TITLE HERE..." : "Search for a series..."}
+                        placeholder={isRetro ? t.insertTitle : t.searchPlaceholder}
                         value={query}
                         onChange={(e) => setQuery(e.target.value)}
                         onKeyDown={handleKeyDown}
