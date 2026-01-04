@@ -121,7 +121,7 @@ export default function Home() {
       )}
 
       <footer className="mt-20 text-gray-600 text-sm pb-8">
-        Data provided by TVMaze
+        Data provided by TVMaze & IMDb
       </footer>
     </main>
   );
