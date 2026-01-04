@@ -1,5 +1,6 @@
 "use client";
 import React, { useState, useEffect, useRef } from "react";
+import { SearchResult } from "../types";
 import { searchSeries } from "../actions/getSeriesData";
 import { useTheme } from "../context/ThemeContext";
 
@@ -12,13 +13,14 @@ interface SearchOverlayProps {
 export default function SearchOverlay({ onSearch, loading, hasSearched }: SearchOverlayProps) {
     const { theme, toggleTheme } = useTheme();
     const [query, setQuery] = useState("");
-    const [results, setResults] = useState<any[]>([]);
+    const [results, setResults] = useState<SearchResult[]>([]);
     const [showDropdown, setShowDropdown] = useState(false);
     const searchTimeout = useRef<NodeJS.Timeout | null>(null);
 
     useEffect(() => {
         if (query.length < 2) {
             setResults([]);
+            // eslint-disable-next-line react-hooks/exhaustive-deps
             setShowDropdown(false);
             return;
         }
@@ -153,6 +155,7 @@ export default function SearchOverlay({ onSearch, loading, hasSearched }: Search
                                     onClick={() => handleSelect(item.title)}
                                 >
                                     <div className="w-10 h-14 bg-gray-800 rounded overflow-hidden flex-shrink-0">
+                                        {/* eslint-disable-next-line @next/next/no-img-element */}
                                         {item.poster && <img src={item.poster} className="w-full h-full object-cover" alt="" />}
                                     </div>
                                     <div className="flex-1 text-left">

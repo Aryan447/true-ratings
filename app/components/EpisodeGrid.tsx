@@ -1,12 +1,7 @@
 "use client";
 import React from "react";
 
-interface Episode {
-    Episode: string;
-    imdbRating: string;
-    Title: string;
-    imdbID: string;
-}
+import { Episode } from "../types";
 
 interface EpisodeGridProps {
     seasons: { [key: number]: Episode[] };
@@ -32,6 +27,7 @@ const getColor = (r: number, isRetro: boolean) => {
     return "bg-rose-700";
 };
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export default function EpisodeGrid({ seasons, globalBest, globalWorst }: EpisodeGridProps) {
     const { theme } = useTheme();
     const isRetro = theme === 'retro';

@@ -15,6 +15,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
     useEffect(() => {
         const saved = localStorage.getItem("theme") as Theme;
+        // eslint-disable-next-line
         if (saved) setTheme(saved);
     }, []);
 

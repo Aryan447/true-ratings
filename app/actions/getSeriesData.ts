@@ -2,27 +2,7 @@
 import axios from "axios";
 import * as cheerio from "cheerio";
 
-interface Episode {
-    Episode: string;
-    imdbRating: string;
-    Title: string;
-    imdbID: string;
-    season?: number;
-}
-
-interface SeriesData {
-    Title: string;
-    Year: string;
-    Plot: string;
-    Poster: string;
-    imdbRating: string;
-    imdbVotes: string;
-    imdbID: string;
-    totalSeasons: string;
-    seasons: { [key: number]: Episode[] };
-    BestEp: { season: number; ep: Episode } | null;
-    WorstEp: { season: number; ep: Episode } | null;
-}
+import { SeriesData, Episode, SearchResult } from "../types";
 
 // Helper to scrape accurate ratings from IMDb Season pages
 async function getImdbSeasonRatings(imdbID: string, season: number): Promise<{ [ep: string]: string }> {
@@ -49,6 +29,7 @@ async function getImdbSeasonRatings(imdbID: string, season: number): Promise<{ [
         const ratingsMap: { [ep: string]: string } = {};
 
         if (Array.isArray(episodes)) {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             episodes.forEach((ep: any) => {
                 // IMDb field can be 'episodeNumber' or just 'episode'
                 const epNum = ep.episodeNumber?.toString() || ep.episode?.toString();
@@ -80,10 +61,11 @@ export async function getSeriesData(query: string): Promise<SeriesData | null> {
         const show = res.data;
         const episodesRaw = show._embedded?.episodes || [];
         const imdbID = show.externals?.imdb;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const totalSeasons = Math.max(...episodesRaw.map((e: any) => e.season));
 
         // 2. Fetch IMDb Ratings in Parallel (Accurate)
-        let imdbRatings: { [key: string]: string } = {};
+        const imdbRatings: { [key: string]: string } = {}; // Use const because we mutate the object, not reassignment
         if (imdbID) {
             console.log(`Fetching true IMDb ratings for ${imdbID} (${totalSeasons} seasons)...`);
             const seasonPromises = [];
@@ -111,9 +93,10 @@ export async function getSeriesData(query: string): Promise<SeriesData | null> {
         const seasonsData: { [key: number]: Episode[] } = {};
         let globalBestRating = -1;
         let globalWorstRating = 11;
-        let bestEp: any = null;
-        let worstEp: any = null;
+        let bestEp: { season: number; ep: Episode } | null = null;
+        let worstEp: { season: number; ep: Episode } | null = null;
 
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         episodesRaw.forEach((ep: any) => {
             const s = ep.season;
             if (!s) return;
@@ -140,11 +123,13 @@ export async function getSeriesData(query: string): Promise<SeriesData | null> {
             if (!isNaN(ratingVal)) {
                 if (ratingVal > globalBestRating) {
                     globalBestRating = ratingVal;
-                    bestEp = { season: s, ep: epObj };
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    bestEp = { season: s, ep: epObj } as any;
                 }
                 if (ratingVal < globalWorstRating) {
                     globalWorstRating = ratingVal;
-                    worstEp = { season: s, ep: epObj };
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    worstEp = { season: s, ep: epObj } as any;
                 }
             }
         });
@@ -169,12 +154,13 @@ export async function getSeriesData(query: string): Promise<SeriesData | null> {
     }
 }
 
-export async function searchSeries(query: string): Promise<any[]> {
+export async function searchSeries(query: string): Promise<SearchResult[]> {
     try {
         if (!query || query.length < 2) return [];
         const url = `https://api.tvmaze.com/search/shows?q=${encodeURIComponent(query)}`;
         const res = await axios.get(url, { validateStatus: () => true });
         if (res.status !== 200) return [];
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         return res.data.map((item: any) => ({
             id: item.show.id,
             title: item.show.name,
@@ -188,7 +174,7 @@ export async function searchSeries(query: string): Promise<any[]> {
     }
 }
 
-export async function getTrendingSeries(ids: number[]): Promise<any[]> {
+export async function getTrendingSeries(ids: number[]): Promise<SearchResult[]> {
     const promises = ids.map(async (id) => {
         try {
             const res = await axios.get(`https://api.tvmaze.com/shows/${id}`, { validateStatus: () => true });

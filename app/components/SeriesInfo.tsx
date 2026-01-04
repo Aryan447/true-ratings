@@ -1,10 +1,12 @@
 "use client";
 import React from "react";
 
+import { SeriesData, Episode } from "../types";
+
 interface SeriesInfoProps {
-    series: any;
-    globalBest: { season: number; ep: any } | null;
-    globalWorst: { season: number; ep: any } | null;
+    series: SeriesData;
+    globalBest: { season: number; ep: Episode } | null;
+    globalWorst: { season: number; ep: Episode } | null;
 }
 
 import { useTheme } from "../context/ThemeContext";
@@ -31,13 +33,17 @@ export default function SeriesInfo({ series, globalBest, globalWorst }: SeriesIn
             )}
 
             <div className="relative z-10 p-8 md:p-12 flex flex-col md:flex-row gap-10 items-start">
-                <div className="w-full md:w-[300px] flex-shrink-0">
-                    <img
-                        src={series.Poster}
-                        alt={series.Title}
-                        className={`w-full rounded-xl shadow-2xl border 
-                            ${isRetro ? 'border-red-500 sepia contrast-125' : 'border-white/10'}`}
-                    />
+                {/* Poster with Reflection */}
+                <div className="w-full md:w-[300px] flex-shrink-0 relative group perspective-1000">
+                    <div className="relative rounded-xl overflow-hidden shadow-2xl transition-transform duration-500 transform group-hover:rotate-y-12">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                            src={series.Poster}
+                            alt={series.Title}
+                            className={`w-full rounded-xl shadow-2xl border 
+                                ${isRetro ? 'border-red-500 sepia contrast-125' : 'border-white/10'}`}
+                        />
+                    </div>
                 </div>
 
                 <div className="flex-1 pt-2">

@@ -8,15 +8,10 @@ import {
     CartesianGrid,
     Tooltip,
     ResponsiveContainer,
-    ReferenceLine
+    // ReferenceLine
 } from "recharts";
 
-interface Episode {
-    Episode: string;
-    imdbRating: string;
-    Title: string;
-    season?: number;
-}
+import { Episode } from "../types";
 
 interface RatingChartProps {
     seasons: { [key: number]: Episode[] };
@@ -24,6 +19,7 @@ interface RatingChartProps {
 
 export default function RatingChart({ seasons }: RatingChartProps) {
     const data = React.useMemo(() => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const points: any[] = [];
         Object.entries(seasons).forEach(([seasonStr, episodes]) => {
             episodes.forEach((ep) => {

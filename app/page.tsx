@@ -7,28 +7,22 @@ import RatingChart from "./components/RatingChart";
 import TrendingRow from "./components/TrendingRow";
 import { getSeriesData, getTrendingSeries } from "./actions/getSeriesData";
 
-interface Episode {
-  Episode: string;
-  imdbRating: string;
-  Title: string;
-  imdbID: string;
-  season?: number;
-}
+import { SeriesData, Episode, SearchResult } from "./types";
 
 // Curated IDs for Trending Sections
 const WORLD_IDS = [82, 169, 2993, 15299, 16121, 1371, 66, 431, 305]; // GoT, BB, Stranger Things, The Boys, Succession, Westworld, Big Bang, Friends, Black Mirror
 const INDIA_IDS = [36082, 39537, 42878, 50824, 47353, 33368, 62237]; // Sacred Games, Mirzapur, Family Man, Scam 1992, Panchayat, Made in Heaven, Farzi
 
 export default function Home() {
-  const [series, setSeries] = useState<any>(null);
+  const [series, setSeries] = useState<SeriesData | null>(null);
   const [seasons, setSeasons] = useState<{ [key: number]: Episode[] }>({});
   const [loading, setLoading] = useState(false);
   const [globalBest, setGlobalBest] = useState<{ season: number; ep: Episode } | null>(null);
   const [globalWorst, setGlobalWorst] = useState<{ season: number; ep: Episode } | null>(null);
   const [hasSearched, setHasSearched] = useState(false);
 
-  const [worldTrending, setWorldTrending] = useState<any[]>([]);
-  const [indiaTrending, setIndiaTrending] = useState<any[]>([]);
+  const [worldTrending, setWorldTrending] = useState<SearchResult[]>([]);
+  const [indiaTrending, setIndiaTrending] = useState<SearchResult[]>([]);
 
   // Fetch Trending Data on Mount
   useEffect(() => {

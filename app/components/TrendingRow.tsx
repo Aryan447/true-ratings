@@ -39,7 +39,10 @@ export default function TrendingRow({ title, items, onSelect }: TrendingRowProps
                             <div className={`relative aspect-[2/3] overflow-hidden mb-2 
                 ${isRetro ? 'border-2 border-yellow-500 shadow-[4px_4px_0px_#ef4444]' : 'rounded-xl glass border-0'}`}>
                                 {item.poster ? (
-                                    <img src={item.poster} alt={item.title} className={`w-full h-full object-cover ${isRetro ? 'sepia-[.4] contrast-125' : ''}`} />
+                                    <>
+                                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                                        <img src={item.poster} alt={item.title} className={`w-full h-full object-cover ${isRetro ? 'sepia-[.4] contrast-125' : ''}`} />
+                                    </>
                                 ) : (
                                     <div className="w-full h-full bg-gray-800 flex items-center justify-center text-gray-500 text-xs text-center p-2">
                                         No Poster
