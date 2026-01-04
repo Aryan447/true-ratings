@@ -147,7 +147,7 @@ export default function SearchOverlay({ onSearch, loading, hasSearched }: Search
 
                     {/* Autocomplete Dropdown */}
                     {showDropdown && results.length > 0 && (
-                        <div className="absolute top-full left-0 right-0 mt-2 glass rounded-xl border border-white/10 overflow-hidden shadow-2xl animate-fade-in">
+                        <div className="absolute top-full left-0 right-0 mt-2 bg-neutral-900 border border-white/20 rounded-xl overflow-hidden shadow-2xl z-[100] max-h-[60vh] overflow-y-auto animate-fade-in">
                             {results.map((item) => (
                                 <div
                                     key={item.id}
