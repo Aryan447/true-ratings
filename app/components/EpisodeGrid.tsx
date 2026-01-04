@@ -15,13 +15,13 @@ interface EpisodeGridProps {
 }
 
 const getColor = (r: number) => {
-    if (r >= 9.0) return "bg-green-500 shadow-[0_0_15px_-3px_rgba(34,197,94,0.6)]";
-    if (r >= 8.5) return "bg-emerald-500";
-    if (r >= 8.0) return "bg-green-600";
-    if (r >= 7.5) return "bg-yellow-500";
-    if (r >= 7.0) return "bg-yellow-600";
-    if (r >= 6.0) return "bg-orange-600";
-    return "bg-red-600";
+    if (r >= 9.0) return "bg-emerald-500";
+    if (r >= 8.5) return "bg-emerald-600";
+    if (r >= 8.0) return "bg-emerald-700";
+    if (r >= 7.5) return "bg-yellow-600";
+    if (r >= 7.0) return "bg-orange-600";
+    if (r >= 6.0) return "bg-orange-700";
+    return "bg-rose-700";
 };
 
 export default function EpisodeGrid({ seasons, globalBest, globalWorst }: EpisodeGridProps) {
@@ -31,16 +31,14 @@ export default function EpisodeGrid({ seasons, globalBest, globalWorst }: Episod
     };
 
     return (
-        <div className="space-y-8 w-full max-w-6xl mx-auto">
+        <div className="space-y-12 w-full max-w-6xl mx-auto">
             {Object.entries(seasons).map(([season, episodes]) => {
                 const avg = getSeasonAvg(episodes);
                 return (
-                    <div key={season} className="glass rounded-xl p-5 md:p-6 transition-all hover:bg-white/[0.07]">
-                        <div className="flex justify-between items-center mb-4 pb-2 border-b border-white/5">
-                            <h3 className="text-xl font-bold text-white">Season {season}</h3>
-                            <div className="px-3 py-1 rounded bg-black/40 text-sm font-mono text-yellow-400 border border-white/5">
-                                Avg: {avg}
-                            </div>
+                    <div key={season} className="animate-fade-in">
+                        <div className="flex items-baseline gap-4 mb-6 border-b border-white/5 pb-4">
+                            <h3 className="text-3xl font-bold text-white tracking-tight">Season {season}</h3>
+                            <span className="text-xl text-gray-500 font-light">Avg {avg}</span>
                         </div>
 
                         <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-10 gap-3">
@@ -53,25 +51,33 @@ export default function EpisodeGrid({ seasons, globalBest, globalWorst }: Episod
                                 return (
                                     <div
                                         key={i}
-                                        className="relative group cursor-default"
+                                        className="relative group cursor-pointer"
                                     >
                                         <div
                                             className={`
-                        aspect-square rounded-md flex flex-col items-center justify-center text-center
-                        transition-transform duration-200 ease-out group-hover:scale-110 z-0 group-hover:z-10
-                        ${invalid ? "bg-gray-800 text-gray-500" : `text-white font-bold ${getColor(rating)}`}
-                        ${isBest ? "ring-2 ring-white ring-offset-2 ring-offset-black scale-105 z-10" : ""}
+                        aspect-[4/5] rounded-lg flex flex-col items-center justify-end pb-3 text-center
+                        transition-all duration-300 ease-out group-hover:scale-105 group-hover:-translate-y-1
+                        ${invalid ? "bg-gray-800/50" : getColor(rating)}
+                        opacity-90 group-hover:opacity-100 shadow-lg group-hover:shadow-2xl
+                        ${isBest ? "ring-2 ring-white" : ""}
                       `}
                                         >
-                                            <span className="text-xs opacity-80 font-normal">E{ep.Episode}</span>
-                                            <span className="text-lg leading-none">{invalid ? "-" : rating.toFixed(1)}</span>
+                                            {/* Gradient Overlay for depth */}
+                                            <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/60 rounded-lg"></div>
+
+                                            <div className="relative z-10 w-full px-1">
+                                                <div className="text-xs text-white/70 mb-1 font-medium">E{ep.Episode}</div>
+                                                <div className="text-2xl font-bold text-white tracking-tight">{invalid ? "-" : rating.toFixed(1)}</div>
+                                            </div>
                                         </div>
 
-                                        {/* Tooltip */}
-                                        <div className="absolute opacity-0 group-hover:opacity-100 transition-opacity duration-200 bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 bg-black/90 backdrop-blur-md border border-white/20 p-3 rounded-lg text-xs z-50 pointer-events-none shadow-2xl">
-                                            <div className="font-bold text-white mb-1 line-clamp-2">{ep.Title}</div>
-                                            <div className="text-gray-400">Episode: {ep.Episode}</div>
-                                            {!invalid && <div className="text-yellow-400">Rating: {rating}</div>}
+                                        {/* Minimal Tooltip */}
+                                        <div className="absolute opacity-0 group-hover:opacity-100 transition-opacity duration-200 bottom-full left-1/2 -translate-x-1/2 mb-3 w-56 bg-black/90 backdrop-blur-xl border border-white/10 p-4 rounded-xl shadow-2xl z-50 pointer-events-none transform translate-y-2 group-hover:translate-y-0 text-left">
+                                            <div className="font-bold text-white text-sm mb-1 line-clamp-2">{ep.Title}</div>
+                                            <div className="flex justify-between items-center text-xs text-gray-400">
+                                                <span>Episode {ep.Episode}</span>
+                                                <span className={!invalid ? "text-white font-bold" : ""}>{rating} ★</span>
+                                            </div>
                                         </div>
                                     </div>
                                 );

@@ -4,14 +4,14 @@ import SearchHero from "./components/SearchHero";
 import SeriesInfo from "./components/SeriesInfo";
 import EpisodeGrid from "./components/EpisodeGrid";
 import RatingChart from "./components/RatingChart";
-
-const API_KEY = "a987f1ef";
+import { getSeriesData } from "./actions/getSeriesData";
 
 interface Episode {
   Episode: string;
   imdbRating: string;
   Title: string;
   imdbID: string;
+  season?: number;
 }
 
 export default function Home() {
@@ -38,57 +38,18 @@ export default function Home() {
     setHasSearched(true);
 
     try {
-      const res = await fetch(`https://www.omdbapi.com/?t=${encodeURIComponent(title)}&apikey=${API_KEY}`);
-      const data = await res.json();
-      if (data.Type === "series") {
+      const data = await getSeriesData(title);
+      if (data) {
         setSeries(data);
-        const total = parseInt(data.totalSeasons);
-        let bestRating = -1;
-        let worstRating = 11;
-        let bestEp: { season: number; ep: Episode } | null = null;
-        let worstEp: { season: number; ep: Episode } | null = null;
-        const allSeasonsData: { [key: number]: Episode[] } = {};
-
-        // Parallel fetch for speed
-        const seasonPromises = [];
-        for (let s = 1; s <= total; s++) {
-          seasonPromises.push(
-            fetch(`https://www.omdbapi.com/?t=${encodeURIComponent(data.Title)}&Season=${s}&apikey=${API_KEY}`)
-              .then(r => r.json())
-              .then(sea => ({ season: s, data: sea }))
-          );
-        }
-
-        const results = await Promise.all(seasonPromises);
-
-        results.forEach(({ season, data: sea }) => {
-          if (sea.Episodes) {
-            allSeasonsData[season] = sea.Episodes;
-            sea.Episodes.forEach((ep: Episode) => {
-              const r = parseFloat(ep.imdbRating);
-              if (!isNaN(r)) {
-                if (r > bestRating) {
-                  bestRating = r;
-                  bestEp = { season, ep };
-                }
-                if (r < worstRating) {
-                  worstRating = r;
-                  worstEp = { season, ep };
-                }
-              }
-            });
-          }
-        });
-
-        setSeasons(allSeasonsData);
-        setGlobalBest(bestEp);
-        setGlobalWorst(worstEp);
+        setSeasons(data.seasons);
+        setGlobalBest(data.BestEp);
+        setGlobalWorst(data.WorstEp);
       } else {
-        // Handle non-series or not found
-        alert("Series not found or not a TV series!");
+        alert("Series not found!");
         setHasSearched(false);
       }
-    } catch {
+    } catch (e) {
+      console.error(e);
       alert("Error fetching data");
       setHasSearched(false);
     }
@@ -142,7 +103,7 @@ export default function Home() {
       )}
 
       <footer className="mt-20 text-gray-600 text-sm">
-        Data provided by OMDb API
+        Data provided by IMDb
       </footer>
     </main>
   );
