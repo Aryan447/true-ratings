@@ -36,6 +36,7 @@ interface Translations {
     nowShowing: string;
     trueRatingsCinema: string;
     insertTitle: string;
+    linkCopied: string;
 }
 
 const translations: Record<Language, Translations> = {
@@ -71,6 +72,7 @@ const translations: Record<Language, Translations> = {
         nowShowing: "NOW SHOWING",
         trueRatingsCinema: "TRUE RATINGS CINEMA",
         insertTitle: "INSERT TITLE HERE...",
+        linkCopied: "Link copied!",
     },
     hi: {
         season: "सीज़न",
@@ -104,6 +106,7 @@ const translations: Record<Language, Translations> = {
         nowShowing: "अब दिखा रहा है",
         trueRatingsCinema: "ट्रू रेटिंग्स सिनेमा",
         insertTitle: "शीर्षक यहाँ डालें...",
+        linkCopied: "लिंक कॉपी हो गया!",
     },
 };
 

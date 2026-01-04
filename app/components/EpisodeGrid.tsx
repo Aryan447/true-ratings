@@ -116,7 +116,7 @@ export default function EpisodeGrid({ seasons, globalBest, globalWorst }: Episod
                                         <span className={`text-xl font-light text-gray-500`}>{t.avg} {avg}</span>
                                     </div>
 
-                                    <div className="grid grid-cols-5 sm:grid-cols-8 md:grid-cols-10 lg:grid-cols-12 gap-2">
+                                    <div className="grid grid-cols-4 sm:grid-cols-8 md:grid-cols-10 lg:grid-cols-12 gap-2">
                                         {episodes.map((ep, i) => {
                                             const rating = parseFloat(ep.imdbRating);
                                             const isBest = globalBest?.ep.imdbID === ep.imdbID;
@@ -148,7 +148,7 @@ export default function EpisodeGrid({ seasons, globalBest, globalWorst }: Episod
                                                     </div>
 
                                                     {/* Tooltip */}
-                                                    <div className={`absolute opacity-0 group-hover:opacity-100 transition-opacity duration-200 bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 p-3 rounded-lg shadow-xl z-50 pointer-events-none transform translate-y-2 group-hover:translate-y-0 text-left bg-black/90 backdrop-blur-xl border border-white/10`}>
+                                                    <div className={`hidden md:block absolute opacity-0 group-hover:opacity-100 transition-opacity duration-200 bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 p-3 rounded-lg shadow-xl z-50 pointer-events-none transform translate-y-2 group-hover:translate-y-0 text-left bg-black/90 backdrop-blur-xl border border-white/10`}>
                                                         <div className={`font-bold text-xs mb-1 line-clamp-2 text-white`}>
                                                             {ep.Title}
                                                         </div>

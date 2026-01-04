@@ -17,23 +17,20 @@ export default function SearchOverlay({ onSearch, loading, hasSearched }: Search
     const [query, setQuery] = useState("");
     const [results, setResults] = useState<SearchResult[]>([]);
     const [showDropdown, setShowDropdown] = useState(false);
-    const searchTimeout = useRef<NodeJS.Timeout | null>(null);
 
     useEffect(() => {
-        if (query.length < 2) {
-            setResults([]);
-
-            setShowDropdown(false);
-            return;
-        }
-
-        if (searchTimeout.current) clearTimeout(searchTimeout.current);
-
-        searchTimeout.current = setTimeout(async () => {
-            const data = await searchSeries(query);
-            setResults(data);
-            setShowDropdown(true);
+        const timeoutId = setTimeout(async () => {
+            if (query.length < 2) {
+                setResults([]);
+                setShowDropdown(false);
+            } else {
+                const data = await searchSeries(query);
+                setResults(data);
+                setShowDropdown(true);
+            }
         }, 300); // 300ms debounce
+
+        return () => clearTimeout(timeoutId);
     }, [query]);
 
     const handleSelect = (title: string) => {

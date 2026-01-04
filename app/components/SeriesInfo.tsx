@@ -92,7 +92,7 @@ export default function SeriesInfo({ series, globalBest, globalWorst }: SeriesIn
                 />
             )}
 
-            <div className="relative z-10 p-8 md:p-12 flex flex-col md:flex-row gap-10 items-start">
+            <div className="relative z-10 p-6 md:p-12 flex flex-col md:flex-row gap-8 md:gap-10 items-start">
                 {/* Poster with Reflection */}
                 <div className="w-full md:w-[300px] flex-shrink-0 relative group perspective-1000">
                     <div className="relative rounded-xl overflow-hidden shadow-2xl transition-transform duration-500 transform group-hover:rotate-y-12">
@@ -106,38 +106,40 @@ export default function SeriesInfo({ series, globalBest, globalWorst }: SeriesIn
                     </div>
                 </div>
 
-                <div className="flex-1 pt-2">
-                    <h1 className={`text-5xl md:text-6xl font-bold mb-4 tracking-tight leading-tight 
-                        ${isRetro ? 'text-yellow-500 font-mono tracking-widest uppercase text-shadow-retro' : 'text-white'}`}>
-                        {series.Title}
-                    </h1>
-                    <div className={`flex items-center gap-4 mb-8 text-lg 
-                        ${isRetro ? 'text-red-500 font-mono tracking-widest' : 'text-gray-400 font-light'}`}>
-                        <span className={`${isRetro ? 'border border-red-500 text-red-500 bg-transparent' : 'bg-white/10 text-white'} px-3 py-1 rounded-md text-sm font-medium`}>
-                            {series.Year}
-                        </span>
-                        <span>{series.totalSeasons} {t.seasonsLabel}</span>
-                        <span>{series.imdbVotes} {t.votes}</span>
+                <div className="flex-1 pt-2 w-full">
+                    <div className="flex flex-col md:block">
+                        <h1 className={`text-3xl md:text-5xl lg:text-6xl font-bold mb-4 tracking-tight leading-tight 
+                            ${isRetro ? 'text-yellow-500 font-mono tracking-widest uppercase text-shadow-retro' : 'text-white'}`}>
+                            {series.Title}
+                        </h1>
+                        <div className={`flex flex-wrap items-center gap-2 md:gap-4 mb-8 text-sm md:text-lg 
+                            ${isRetro ? 'text-red-500 font-mono tracking-widest' : 'text-gray-400 font-light'}`}>
+                            <span className={`${isRetro ? 'border border-red-500 text-red-500 bg-transparent' : 'bg-white/10 text-white'} px-3 py-1 rounded-md text-xs md:text-sm font-medium`}>
+                                {series.Year}
+                            </span>
+                            <span>{series.totalSeasons} {t.seasonsLabel}</span>
+                            <span>{series.imdbVotes} {t.votes}</span>
+                        </div>
                     </div>
 
-                    <p className={`text-xl leading-relaxed mb-10 max-w-3xl 
+                    <p className={`text-base md:text-xl leading-relaxed mb-10 max-w-3xl 
                         ${isRetro ? 'text-yellow-100/80 font-mono tracking-wide' : 'text-gray-300 font-light'}`}>
                         {series.Plot}
                     </p>
 
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div className={`p-6 rounded-xl border backdrop-blur-sm 
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                        <div className={`p-4 md:p-6 rounded-xl border backdrop-blur-sm 
                             ${isRetro ? 'bg-red-900/20 border-red-500' : 'bg-black/40 border-white/5'}`}>
                             <div className={`text-sm uppercase tracking-wider font-semibold mb-1 
                                 ${isRetro ? 'text-red-400 font-mono' : 'text-gray-500'}`}>{t.imdbRating}</div>
-                            <div className={`text-4xl font-bold 
+                            <div className={`text-3xl md:text-4xl font-bold 
                                 ${isRetro ? 'text-yellow-500 font-mono' : 'text-white'}`}>
                                 {series.imdbRating}<span className="text-lg text-gray-500 font-normal">/10</span>
                             </div>
                         </div>
 
                         {globalBest && (
-                            <div className={`p-6 rounded-xl border backdrop-blur-sm 
+                            <div className={`p-4 md:p-6 rounded-xl border backdrop-blur-sm 
                                 ${isRetro ? 'bg-yellow-900/20 border-yellow-500' : 'bg-emerald-900/10 border-emerald-500/10'}`}>
                                 <div className={`text-sm uppercase tracking-wider font-semibold mb-1 
                                     ${isRetro ? 'text-yellow-500 font-mono' : 'text-emerald-500'}`}>{t.highestRated}</div>
@@ -153,7 +155,7 @@ export default function SeriesInfo({ series, globalBest, globalWorst }: SeriesIn
                         )}
 
                         {globalWorst && (
-                            <div className={`p-6 rounded-xl border backdrop-blur-sm 
+                            <div className={`p-4 md:p-6 rounded-xl border backdrop-blur-sm 
                                 ${isRetro ? 'bg-red-950/40 border-red-800' : 'bg-rose-900/10 border-rose-500/10'}`}>
                                 <div className={`text-sm uppercase tracking-wider font-semibold mb-1 
                                     ${isRetro ? 'text-red-500 font-mono' : 'text-rose-500'}`}>{t.lowestRated}</div>
@@ -169,16 +171,36 @@ export default function SeriesInfo({ series, globalBest, globalWorst }: SeriesIn
                         )}
                     </div>
 
-                    <div className="mt-8 flex gap-4">
+                    <div className="mt-8 flex flex-wrap gap-4">
                         <a
                             href={`https://www.imdb.com/title/${series.imdbID}`}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className={`px-6 py-3 rounded-lg font-bold transition-colors 
+                            className={`px-6 py-3 rounded-lg font-bold transition-colors flex items-center gap-2
                                 ${isRetro ? 'bg-red-600 text-yellow-300 hover:bg-red-700 border-2 border-yellow-500 uppercase tracking-widest' : 'bg-[#F5C518] text-black hover:bg-[#E2B616]'}`}
                         >
                             {isRetro ? t.checkArchives : t.viewOnImdb}
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                <path d="M11 3a1 1 0 100 2h2.586l-6.293 6.293a1 1 0 101.414 1.414L15 6.414V9a1 1 0 102 0V4a1 1 0 00-1-1h-5z" />
+                                <path d="M5 5a2 2 0 00-2 2v8a2 2 0 002 2h8a2 2 0 002-2v-3a1 1 0 10-2 0v3H5V7h3a1 1 0 000-2H5z" />
+                            </svg>
                         </a>
+
+                        <button
+                            onClick={() => {
+                                navigator.clipboard.writeText(window.location.href);
+                                alert(t.linkCopied);
+                            }}
+                            className={`px-6 py-3 rounded-lg font-bold transition-colors flex items-center gap-2
+                                ${isRetro
+                                    ? 'bg-transparent text-[#c5a059] border-2 border-[#c5a059] hover:bg-[#c5a059] hover:text-[#1a0505] uppercase tracking-widest'
+                                    : 'bg-white/10 text-white hover:bg-white/20'}`}
+                        >
+                            Share
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                <path d="M15 8a3 3 0 10-2.977-2.63l-4.94 2.47a3 3 0 100 4.319l4.94 2.47a3 3 0 10.895-1.789l-4.94-2.47a3.027 3.027 0 000-.74l4.94-2.47C13.456 7.68 14.19 8 15 8z" />
+                            </svg>
+                        </button>
                     </div>
                 </div>
             </div>

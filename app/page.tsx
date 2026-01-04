@@ -7,6 +7,7 @@ import RatingChart from "./components/RatingChart";
 import TrendingRow from "./components/TrendingRow";
 import { getSeriesData, getTrendingSeries } from "./actions/getSeriesData";
 import { useLanguage } from "./context/LanguageContext"; // Import useLanguage
+import BackToTop from "./components/BackToTop";
 
 import { SeriesData, Episode, SearchResult } from "./types";
 
@@ -126,6 +127,7 @@ export default function Home() {
       <footer className="mt-20 text-gray-600 text-sm pb-8">
         {t.dataProvidedBy}
       </footer>
+      <BackToTop />
     </main>
   );
 }
