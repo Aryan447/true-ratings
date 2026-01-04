@@ -6,6 +6,7 @@ import EpisodeGrid from "./components/EpisodeGrid";
 import RatingChart from "./components/RatingChart";
 import TrendingRow from "./components/TrendingRow";
 import { getSeriesData, getTrendingSeries } from "./actions/getSeriesData";
+import { useLanguage } from "./context/LanguageContext"; // Import useLanguage
 
 import { SeriesData, Episode, SearchResult } from "./types";
 
@@ -23,6 +24,8 @@ export default function Home() {
 
   const [worldTrending, setWorldTrending] = useState<SearchResult[]>([]);
   const [indiaTrending, setIndiaTrending] = useState<SearchResult[]>([]);
+
+  const { t, toggleLanguage, language } = useLanguage(); // Use hook
 
   // Fetch Trending Data on Mount
   useEffect(() => {
@@ -60,17 +63,23 @@ export default function Home() {
         setGlobalBest(data.BestEp);
         setGlobalWorst(data.WorstEp);
       } else {
-        alert("Series not found!");
+        alert(t.seriesNotFound);
       }
     } catch (e) {
       console.error(e);
-      alert("Error fetching data");
+      alert(t.errorFetching);
     }
     setLoading(false);
   };
 
   return (
-    <main className="min-h-screen py-8 px-4 flex flex-col items-center">
+    <main className="min-h-screen py-8 px-4 flex flex-col items-center relative">
+      <button
+        onClick={toggleLanguage}
+        className="absolute top-4 right-4 z-50 px-4 py-2 bg-white/10 backdrop-blur-md border border-white/20 rounded-full text-sm font-medium hover:bg-white/20 transition-colors"
+      >
+        {language === "en" ? "हिंदी" : "English"}
+      </button>
 
       <SearchOverlay
         onSearch={fetchSeries}
@@ -82,10 +91,10 @@ export default function Home() {
       {!hasSearched && !loading && (
         <div className="w-full animate-fade-in mt-10">
           {worldTrending.length > 0 && (
-            <TrendingRow title="Trending Worldwide" items={worldTrending} onSelect={fetchSeries} />
+            <TrendingRow title={t.trendingWorld} items={worldTrending} onSelect={fetchSeries} />
           )}
           {indiaTrending.length > 0 && (
-            <TrendingRow title="Trending in India" items={indiaTrending} onSelect={fetchSeries} />
+            <TrendingRow title={t.trendingIndia} items={indiaTrending} onSelect={fetchSeries} />
           )}
         </div>
       )}
@@ -115,7 +124,7 @@ export default function Home() {
       )}
 
       <footer className="mt-20 text-gray-600 text-sm pb-8">
-        Data provided by TVMaze & IMDb
+        {t.dataProvidedBy}
       </footer>
     </main>
   );

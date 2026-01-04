@@ -19,11 +19,12 @@ const geistMono = Geist_Mono({
 // };
 
 export const metadata: Metadata = {
-  title: "True Ratings by Aryan447",
-  description: "A curated Series/Movies Ratings app",
+  title: "True Ratings",
+  description: "Visualizing IMDb ratings per episode",
 };
 
 import { ThemeProvider } from "./context/ThemeContext";
+import { LanguageProvider } from "./context/LanguageContext";
 
 export default function RootLayout({
   children,
@@ -33,10 +34,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <ThemeProvider>
-          {children}
+          <LanguageProvider>
+            {children}
+          </LanguageProvider>
         </ThemeProvider>
       </body>
     </html>

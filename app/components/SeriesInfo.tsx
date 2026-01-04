@@ -1,6 +1,7 @@
 "use client";
 import React from "react";
 import { useTheme } from "../context/ThemeContext";
+import { useLanguage } from "../context/LanguageContext";
 
 import { SeriesData, Episode } from "../types";
 
@@ -10,10 +11,9 @@ interface SeriesInfoProps {
     globalWorst: { season: number; ep: Episode } | null;
 }
 
-
-
 export default function SeriesInfo({ series, globalBest, globalWorst }: SeriesInfoProps) {
     const { theme } = useTheme();
+    const { t } = useLanguage();
     const isRetro = theme === 'retro';
 
     if (isRetro) {
@@ -43,7 +43,7 @@ export default function SeriesInfo({ series, globalBest, globalWorst }: SeriesIn
 
                     <div className="flex flex-wrap gap-4 mb-8">
                         <div className="bg-[#110202] px-6 py-4 border-2 border-[#c5a059] flex flex-col items-center">
-                            <span className="block text-xs text-[#8a0c0c] uppercase tracking-widest font-bold mb-1">Critics Rating</span>
+                            <span className="block text-xs text-[#8a0c0c] uppercase tracking-widest font-bold mb-1">{t.criticsRating}</span>
                             <span className="text-3xl font-bold text-[#c5a059]">
                                 {series.imdbRating}
                             </span>
@@ -52,7 +52,7 @@ export default function SeriesInfo({ series, globalBest, globalWorst }: SeriesIn
 
                         {globalBest && (
                             <div className="bg-[#0f1a0f] px-6 py-4 border-2 border-[#1a4a1a] flex flex-col justify-center">
-                                <span className="block text-xs text-[#2a8a2a] uppercase tracking-widest font-bold mb-1">Masterpiece</span>
+                                <span className="block text-xs text-[#2a8a2a] uppercase tracking-widest font-bold mb-1">{t.masterpiece}</span>
                                 <div className="font-bold text-[#c5e6c5] truncate max-w-[150px]" title={globalBest.ep.Title}>
                                     &quot;{globalBest.ep.Title}&quot;
                                 </div>
@@ -67,7 +67,7 @@ export default function SeriesInfo({ series, globalBest, globalWorst }: SeriesIn
                         rel="noopener noreferrer"
                         className="inline-block px-6 py-2 border-2 border-[#c5a059] text-[#c5a059] hover:bg-[#c5a059] hover:text-[#1a0505] transition-colors font-bold uppercase tracking-widest"
                     >
-                        View Program
+                        {t.viewProgram}
                     </a>
                 </div>
             </div>
@@ -116,8 +116,8 @@ export default function SeriesInfo({ series, globalBest, globalWorst }: SeriesIn
                         <span className={`${isRetro ? 'border border-red-500 text-red-500 bg-transparent' : 'bg-white/10 text-white'} px-3 py-1 rounded-md text-sm font-medium`}>
                             {series.Year}
                         </span>
-                        <span>{series.totalSeasons} Seasons</span>
-                        <span>{series.imdbVotes} Votes</span>
+                        <span>{series.totalSeasons} {t.seasonsLabel}</span>
+                        <span>{series.imdbVotes} {t.votes}</span>
                     </div>
 
                     <p className={`text-xl leading-relaxed mb-10 max-w-3xl 
@@ -129,7 +129,7 @@ export default function SeriesInfo({ series, globalBest, globalWorst }: SeriesIn
                         <div className={`p-6 rounded-xl border backdrop-blur-sm 
                             ${isRetro ? 'bg-red-900/20 border-red-500' : 'bg-black/40 border-white/5'}`}>
                             <div className={`text-sm uppercase tracking-wider font-semibold mb-1 
-                                ${isRetro ? 'text-red-400 font-mono' : 'text-gray-500'}`}>IMDb Rating</div>
+                                ${isRetro ? 'text-red-400 font-mono' : 'text-gray-500'}`}>{t.imdbRating}</div>
                             <div className={`text-4xl font-bold 
                                 ${isRetro ? 'text-yellow-500 font-mono' : 'text-white'}`}>
                                 {series.imdbRating}<span className="text-lg text-gray-500 font-normal">/10</span>
@@ -140,7 +140,7 @@ export default function SeriesInfo({ series, globalBest, globalWorst }: SeriesIn
                             <div className={`p-6 rounded-xl border backdrop-blur-sm 
                                 ${isRetro ? 'bg-yellow-900/20 border-yellow-500' : 'bg-emerald-900/10 border-emerald-500/10'}`}>
                                 <div className={`text-sm uppercase tracking-wider font-semibold mb-1 
-                                    ${isRetro ? 'text-yellow-500 font-mono' : 'text-emerald-500'}`}>Highest Rated</div>
+                                    ${isRetro ? 'text-yellow-500 font-mono' : 'text-emerald-500'}`}>{t.highestRated}</div>
                                 <div className={`font-medium truncate mb-1 
                                     ${isRetro ? 'text-red-300 font-mono' : 'text-emerald-200'}`}>
                                     S{globalBest.season}E{globalBest.ep.Episode}: {globalBest.ep.Title}
@@ -156,7 +156,7 @@ export default function SeriesInfo({ series, globalBest, globalWorst }: SeriesIn
                             <div className={`p-6 rounded-xl border backdrop-blur-sm 
                                 ${isRetro ? 'bg-red-950/40 border-red-800' : 'bg-rose-900/10 border-rose-500/10'}`}>
                                 <div className={`text-sm uppercase tracking-wider font-semibold mb-1 
-                                    ${isRetro ? 'text-red-500 font-mono' : 'text-rose-500'}`}>Lowest Rated</div>
+                                    ${isRetro ? 'text-red-500 font-mono' : 'text-rose-500'}`}>{t.lowestRated}</div>
                                 <div className={`font-medium truncate mb-1 
                                     ${isRetro ? 'text-red-900 font-mono' : 'text-rose-200'}`}>
                                     S{globalWorst.season}E{globalWorst.ep.Episode}: {globalWorst.ep.Title}
@@ -177,7 +177,7 @@ export default function SeriesInfo({ series, globalBest, globalWorst }: SeriesIn
                             className={`px-6 py-3 rounded-lg font-bold transition-colors 
                                 ${isRetro ? 'bg-red-600 text-yellow-300 hover:bg-red-700 border-2 border-yellow-500 uppercase tracking-widest' : 'bg-[#F5C518] text-black hover:bg-[#E2B616]'}`}
                         >
-                            {isRetro ? "CHECK ARCHIVES" : "View on IMDb"}
+                            {isRetro ? t.checkArchives : t.viewOnImdb}
                         </a>
                     </div>
                 </div>
