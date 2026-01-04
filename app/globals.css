@@ -1,134 +1,117 @@
-@import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 :root {
-  --background: #050505;
+  --background: #000000;
   --foreground: #ffffff;
-  --card-bg: rgba(255, 255, 255, 0.03);
-  --card-border: rgba(255, 255, 255, 0.08);
-  --primary-gradient: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
-  --accent-glow: rgba(255, 165, 0, 0.15);
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-b:root {
-  --background: #0a0a0a;
-  --foreground: #ededed;
-  --primary: #3b82f6;
-  /* Modern Blue */
-  --card-bg: rgba(255, 255, 255, 0.05);
-  --glass-border: rgba(255, 255, 255, 0.1);
-  --font-main: var(--font-inter);
-}
-
-/* Retro Theme Variables */
-[data-theme='retro'] {
-  --background: #1a0505;
-  /* Deep Red/Black */
-  --foreground: #fbbf24;
-  /* Gold */
-  --primary: #ef4444;
-  /* Retro Red */
-  --card-bg: #2a0a0a;
-  --glass-border: #fbbf24;
-  --font-main: 'Courier New', Courier, monospace;
+  --glass-border: rgba(255, 255, 255, 0.2);
+  --glass-highlight: rgba(255, 255, 255, 0.1);
 }
 
 body {
-  background: radial-gradient(circle at 50% 0%, #1a1a1a 0%, #050505 100%);
   color: var(--foreground);
-  font-family: var(--font-sans), system-ui, sans-serif;
-  transition: background-color 0.5s ease, color 0.5s ease;
+  background: black;
+  /* Fallback */
   min-height: 100vh;
   margin: 0;
-  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+  font-family: var(--font-geist-sans), sans-serif;
 }
 
-/* Retro Specific Utilities */
-.retro-text {
-  font-family: 'Courier New', Courier, monospace;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.5);
-}
-
-.retro-border {
-  border: 2px solid var(--foreground);
-  box-shadow: 4px 4px 0px var(--primary);
-}
-
-/* UI Switching Helpers */
-[data-theme='retro'] .modern-only {
-  display: none !important;
-}
-
-[data-theme='modern'] .retro-only {
-  display: none !important;
-}
-
-/* Global CRT Scanline Effect (Only in Retro) */
-[data-theme='retro'] body::before {
-  content: " ";
-  display: block;
+/* Aurora Mesh Gradient Background */
+body::before {
+  content: "";
   position: fixed;
-  top: 0;
-  left: 0;
-  bottom: 0;
-  right: 0;
-  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
-  z-index: 9999;
-  background-size: 100% 2px, 3px 100%;
-  pointer-events: none;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle at 50% 50%, rgba(56, 189, 248, 0.15), transparent 50%),
+    radial-gradient(circle at 0% 0%, rgba(168, 85, 247, 0.2), transparent 50%),
+    radial-gradient(circle at 100% 0%, rgba(236, 72, 153, 0.2), transparent 50%),
+    radial-gradient(circle at 100% 100%, rgba(6, 182, 212, 0.2), transparent 50%),
+    radial-gradient(circle at 0% 100%, rgba(99, 102, 241, 0.2), transparent 50%);
+  filter: blur(80px);
+  z-index: -1;
+  animation: aurora 20s linear infinite alternate;
 }
 
-/* Premium Glass Effect */
-.glass {
-  background: var(--card-bg);
+@keyframes aurora {
+  0% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+
+  100% {
+    transform: translate(-5%, -5%) rotate(5deg);
+  }
+}
+
+/* Liquid Glass Utility */
+.liquid-card {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(40px) saturate(180%);
+  -webkit-backdrop-filter: blur(40px) saturate(180%);
+  /* Safari */
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow:
+    0 8px 32px 0 rgba(0, 0, 0, 0.3),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.05),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.1);
+  /* Top highlight */
+  border-radius: 24px;
+  /* Super rounded */
+  transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.liquid-card:hover {
+  background: rgba(255, 255, 255, 0.06);
+  box-shadow:
+    0 12px 40px 0 rgba(0, 0, 0, 0.4),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.1),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.2);
+  transform: translateY(-4px) scale(1.01);
+}
+
+/* Search Bar Liquid Style */
+.liquid-input {
+  background: rgba(0, 0, 0, 0.4);
   backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid var(--card-border);
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
-}
-
-.text-gradient {
-  background: var(--primary-gradient);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  border-radius: 9999px;
+  /* Pill shape */
 }
 
 /* Animations */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
+@keyframes float {
 
-  to {
-    opacity: 1;
+  0%,
+  100% {
     transform: translateY(0);
   }
+
+  50% {
+    transform: translateY(-10px);
+  }
 }
 
-.animate-fade-in {
-  animation: fadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+.animate-float {
+  animation: float 6s ease-in-out infinite;
 }
 
-/* Scrollbar */
-::-webkit-scrollbar {
-  width: 6px;
+/* Hide scrollbar */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
 }
 
-::-webkit-scrollbar-track {
-  background: transparent;
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
-::-webkit-scrollbar-thumb {
-  background: #333;
-  border-radius: 10px;
+/* Ensure clean text selection */
+::selection {
+  background: rgba(56, 189, 248, 0.3);
+  color: white;
 }

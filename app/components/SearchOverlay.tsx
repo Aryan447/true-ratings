@@ -50,85 +50,61 @@ export default function SearchOverlay({ onSearch, loading, hasSearched }: Search
         ? "w-full max-w-6xl mx-auto mb-8 flex items-center gap-4 transition-all duration-500"
         : "flex flex-col items-center justify-center min-h-[50vh] text-center px-6 w-full relative z-20 transition-all duration-500";
 
+    const inputContainerClasses = hasSearched
+        ? "relative flex-1"
+        : "relative w-full max-w-2xl group";
+
     // Retro Marquee Logic
     const isRetro = theme === 'retro';
 
     return (
         <div className={containerClasses}>
-            {/* Theme Toggle Button (Top Right) */}
-            <button
-                onClick={toggleTheme}
-                className={`fixed top-4 right-4 z-[100] px-4 py-2 rounded-full font-bold text-xs uppercase transition-all 
-                    ${isRetro ? 'bg-yellow-500 text-black border-2 border-red-500 hover:scale-105' : 'bg-white/10 text-white backdrop-blur-md hover:bg-white/20'}`}
-            >
-                {isRetro ? "Switch to Modern" : "Switch to Retro"}
-            </button>
-
             {!hasSearched && (
-                <>
-                    {isRetro ? (
-                        /* Classic Cinema Header */
-                        <div className="mb-10 text-center relative p-8 border-4 border-yellow-500 bg-black shadow-[0_0_30px_rgba(239,68,68,0.5)]">
-                            <div className="absolute top-0 left-0 w-full h-full border border-dashed border-red-500 opacity-50 pointer-events-none"></div>
-                            <h1 className="text-5xl md:text-7xl font-bold text-yellow-500 tracking-widest font-mono uppercase drop-shadow-md">
-                                NOW SHOWING
-                            </h1>
-                            <p className="text-red-500 mt-2 font-mono tracking-widest">TRUE RATINGS CINEMA</p>
-
-                            {/* Marquee Bulbs */}
-                            <div className="absolute -top-3 left-10 w-4 h-4 rounded-full bg-yellow-200 animate-pulse shadow-[0_0_10px_yellow]"></div>
-                            <div className="absolute -top-3 right-10 w-4 h-4 rounded-full bg-yellow-200 animate-pulse shadow-[0_0_10px_yellow]"></div>
-                            <div className="absolute -bottom-3 left-10 w-4 h-4 rounded-full bg-yellow-200 animate-pulse shadow-[0_0_10px_yellow]"></div>
-                            <div className="absolute -bottom-3 right-10 w-4 h-4 rounded-full bg-yellow-200 animate-pulse shadow-[0_0_10px_yellow]"></div>
-                        </div>
-                    ) : (
-                        /* Modern Header */
-                        <>
-                            <h1 className="text-6xl md:text-8xl font-bold mb-6 tracking-tighter bg-clip-text text-transparent bg-gradient-to-b from-white to-gray-500 animate-fade-in">
-                                True Ratings
-                            </h1>
-                            <p className="text-gray-400 mb-10 text-xl font-light max-w-lg get-started animate-fade-in">
-                                Discover the real ratings of every episode.
-                            </p>
-                        </>
-                    )}
-                </>
+                <div className="flex flex-col items-center animate-fade-in">
+                    <h1 className="text-7xl md:text-9xl font-bold mb-4 tracking-tighter text-transparent bg-clip-text bg-gradient-to-br from-white via-white to-white/50 animate-float drop-shadow-2xl">
+                        Pure Glass
+                    </h1>
+                    <p className="text-blue-200/80 mb-12 text-xl font-light tracking-wide max-w-lg backdrop-blur-sm py-2 px-6 rounded-full border border-white/5 bg-black/10">
+                        True Ratings. Crystal Clear.
+                    </p>
+                </div>
             )}
 
             {hasSearched && (
                 <div
-                    className={`text-2xl font-bold cursor-pointer mr-4 ${isRetro ? 'text-yellow-500 font-mono' : 'text-gradient'}`}
+                    className="text-2xl font-bold cursor-pointer text-white/90 hover:text-white mr-6 transition-colors tracking-tight"
                     onClick={() => window.location.reload()}
                 >
-                    {isRetro ? "TR CINEMA" : "True Ratings"}
+                    Pure Glass
                 </div>
             )}
 
-            <div className={hasSearched ? "relative flex-1" : "relative w-full max-w-2xl group"}>
-                {/* Glow effect only in Hero mode (Modern) */}
-                {!hasSearched && !isRetro && (
-                    <div className="absolute inset-0 bg-gradient-to-r from-yellow-500/20 to-orange-500/20 rounded-2xl blur-xl opacity-30 group-hover:opacity-50 transition duration-700" />
-                )}
+            <div className={inputContainerClasses}>
+                <div className={`relative transition-all duration-500 z-50 ${hasSearched ? '' : 'hover:scale-105'}`}>
+                    {/* Outer Glow */}
+                    {!hasSearched && <div className="absolute -inset-1 bg-gradient-to-r from-cyan-500/30 to-purple-500/30 rounded-full blur-xl opacity-50 animate-pulse"></div>}
 
-                {/* Search Input Container */}
-                <div className={`relative flex overflow-visible transition-all duration-300 z-50
-                    ${isRetro
-                        ? 'bg-black border-2 border-yellow-500 shadow-[4px_4px_0px_#ef4444]'
-                        : 'glass bg-black/90 backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl' /* Darker, Opaque Background for Modern UI */}
-                    ${hasSearched && !isRetro ? 'rounded-lg' : ''}
-                `}>
-                    <input
-                        className={`w-full bg-transparent outline-none font-light 
-                            ${isRetro ? 'text-yellow-500 placeholder-red-900 font-mono text-xl px-6 py-4' : 'text-white placeholder-gray-500 text-xl px-8 py-5'}
-                            ${hasSearched && !isRetro ? 'px-4 py-3 text-lg' : ''}
-                        `}
-                        placeholder={isRetro ? "INSERT TITLE HERE..." : "Search for a series..."}
-                        value={query}
-                        onChange={(e) => setQuery(e.target.value)}
-                        onKeyDown={handleKeyDown}
-                        onFocus={() => query.length >= 2 && setShowDropdown(true)}
+                    <div className={`relative flex items-center liquid-input overflow-hidden ${hasSearched ? 'rounded-2xl' : 'rounded-full h-16'}`}>
+                        <input
+                            className={`w-full bg-transparent outline-none text-white placeholder-white/40 font-light 
+                ${hasSearched ? 'px-6 py-3 text-lg' : 'px-8 text-2xl h-full'}`}
+                            placeholder="Search..."
+                            value={query}
+                            onChange={(e) => setQuery(e.target.value)}
+                            onKeyDown={handleKeyDown}
+                            autoFocus={!hasSearched}
+                        />
+                        {!hasSearched && (
+                            <div className="pr-6 text-white/30">
+                                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                            </div>
+                        )}
+                    </div>
+                    value={query}
+                    onChange={(e) => setQuery(e.target.value)}
+                    onKeyDown={handleKeyDown}
+                    onFocus={() => query.length >= 2 && setShowDropdown(true)}
                     // onBlur={() => setTimeout(() => setShowDropdown(false), 200)} // Delayed blur to allow clicks
-                    />
                     <button
                         onClick={() => handleSelect(query)}
                         disabled={loading}
