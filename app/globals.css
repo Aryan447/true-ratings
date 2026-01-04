@@ -1,12 +1,14 @@
 @import "tailwindcss";
 
 :root {
-  --background: #120518;
-  --foreground: #00ff00;
-  --neon-pink: #ff00ff;
-  --neon-cyan: #00ffff;
-  --neon-yellow: #ffcc00;
-  --crt-overlay: rgba(18, 16, 16, 0.1);
+  --background: #1a0505;
+  /* Deep Red/Black */
+  --foreground: #f0e6d2;
+  /* Parchment/Gold-ish */
+  --cinema-gold: #c5a059;
+  --cinema-red: #8a0c0c;
+  --marquee-bulb-on: #fffec4;
+  --marquee-bulb-off: #554433;
 }
 
 @theme inline {
@@ -17,186 +19,48 @@
 @layer base {
   body {
     background-color: var(--background);
+    background-image: radial-gradient(circle at center, #2a0808 0%, #000000 100%);
     color: var(--foreground);
-    font-family: 'Courier New', Courier, monospace;
+    font-family: 'Times New Roman', serif;
+    /* Standard Serif fallback */
     overflow-x: hidden;
-    position: relative;
-  }
-
-  /* CRT Scanline Overlay */
-  body::before {
-    content: " ";
-    display: block;
-    position: fixed;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    right: 0;
-    background: linear-gradient(to bottom,
-        rgba(18, 16, 16, 0) 50%,
-        rgba(0, 0, 0, 0.25) 50%);
-    background-size: 100% 4px;
-    z-index: 9999;
-    pointer-events: none;
-    animation: scanline 10s linear infinite;
-  }
-
-  /* Vignette */
-  body::after {
-    content: " ";
-    display: block;
-    position: fixed;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    right: 0;
-    background: radial-gradient(circle, rgba(0, 0, 0, 0) 60%, rgba(0, 0, 0, 0.6) 100%);
-    z-index: 9998;
-    pointer-events: none;
   }
 }
 
-@keyframes scanline {
-  0% {
-    background-position: 0 0;
-  }
+/* Marquee Effect for Headers */
+.marquee-text {
+  text-transform: uppercase;
+  text-shadow: 0 0 5px var(--cinema-gold), 2px 2px 0px #000;
+  letter-spacing: 0.1em;
+}
 
+.cinema-border {
+  border: 4px double var(--cinema-gold);
+  box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.8), 0 0 10px rgba(197, 160, 89, 0.3);
+  background: #110202;
+}
+
+/* Lightbulbs animation */
+@keyframes blink {
+
+  0%,
   100% {
-    background-position: 0 100vh;
-  }
-}
-
-@keyframes flicker {
-  0% {
-    opacity: 0.97;
-  }
-
-  5% {
-    opacity: 0.95;
-  }
-
-  10% {
-    opacity: 0.9;
-  }
-
-  15% {
-    opacity: 0.95;
-  }
-
-  20% {
-    opacity: 0.98;
-  }
-
-  25% {
-    opacity: 0.95;
-  }
-
-  30% {
-    opacity: 0.9;
-  }
-
-  35% {
-    opacity: 0.96;
-  }
-
-  40% {
-    opacity: 0.98;
-  }
-
-  45% {
-    opacity: 0.95;
+    opacity: 1;
+    box-shadow: 0 0 10px var(--marquee-bulb-on);
   }
 
   50% {
-    opacity: 0.99;
-  }
-
-  55% {
-    opacity: 0.93;
-  }
-
-  60% {
-    opacity: 0.9;
-  }
-
-  65% {
-    opacity: 0.96;
-  }
-
-  70% {
-    opacity: 1;
-  }
-
-  75% {
-    opacity: 0.97;
-  }
-
-  80% {
-    opacity: 0.92;
-  }
-
-  85% {
-    opacity: 0.96;
-  }
-
-  90% {
-    opacity: 0.9;
-  }
-
-  95% {
-    opacity: 0.97;
-  }
-
-  100% {
-    opacity: 0.95;
+    opacity: 0.5;
+    box-shadow: 0 0 2px var(--marquee-bulb-off);
   }
 }
 
-@keyframes textShadow {
-  0% {
-    text-shadow: 0.4389924193300864px 0 1px rgba(0, 30, 255, 0.5), -0.4389924193300864px 0 1px rgba(255, 0, 80, 0.3), 0 0 3px;
-  }
-
-  5% {
-    text-shadow: 2.7928974010788217px 0 1px rgba(0, 30, 255, 0.5), -2.7928974010788217px 0 1px rgba(255, 0, 80, 0.3), 0 0 3px;
-  }
-
-  /* ... simplified glitch effect ... */
-  100% {
-    text-shadow: 0.4389924193300864px 0 1px rgba(0, 30, 255, 0.5), -0.4389924193300864px 0 1px rgba(255, 0, 80, 0.3), 0 0 3px;
-  }
-}
-
-.text-retro {
-  color: var(--neon-pink);
-  text-shadow: 0 0 5px var(--neon-pink), 0 0 10px var(--neon-pink);
-}
-
-.text-retro-cyan {
-  color: var(--neon-cyan);
-  text-shadow: 0 0 5px var(--neon-cyan), 0 0 10px var(--neon-cyan);
-}
-
-.retro-box {
-  background: #000;
-  border: 2px solid var(--neon-cyan);
-  box-shadow: 0 0 10px var(--neon-cyan), inset 0 0 20px rgba(0, 255, 255, 0.2);
-  position: relative;
-}
-
-.retro-input {
-  background: #111;
-  border: 2px solid var(--neon-pink);
-  color: var(--neon-pink);
-  font-family: 'Courier New', monospace;
-  box-shadow: 0 0 5px var(--neon-pink);
-}
-
-.retro-input:focus {
-  outline: none;
-  box-shadow: 0 0 15px var(--neon-pink);
-}
-
-.flicker-animation {
-  animation: flicker 0.15s infinite;
+.bulb {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--marquee-bulb-on);
+  display: inline-block;
+  margin: 4px;
+  animation: blink 2s infinite alternate;
 }

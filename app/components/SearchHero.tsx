@@ -14,35 +14,42 @@ export default function SearchHero({ onSearch, loading }: SearchHeroProps) {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-[50vh] text-center px-4 w-full">
-      <h1 className="text-4xl md:text-6xl font-bold mb-8 tracking-widest uppercase text-retro flicker-animation">
-        TRUE RATINGS v1.0
-      </h1>
-      <p className="text-retro-cyan mb-8 text-lg font-mono tracking-wider">
-        INSERT COIN TO CONTINUE... OR SEARCH SERIES
-      </p>
+    <div className="flex flex-col items-center justify-center min-h-[50vh] text-center px-4 w-full relative">
+      {/* Decorative Lights Top */}
+      <div className="flex gap-4 mb-8">
+        {[...Array(8)].map((_, i) => <div key={i} className="bulb" style={{ animationDelay: `${i * 0.1}s` }} />)}
+      </div>
 
-      <div className="relative w-full max-w-xl group">
-        <div className="retro-box p-2">
-          <div className="flex items-center gap-2">
-            <span className="text-neon-pink text-xl font-bold">{">"}</span>
-            <input
-              className="w-full bg-transparent p-2 outline-none text-lg text-neon-pink font-mono placeholder-pink-900 border-none focus:ring-0"
-              placeholder="ENTER_SERIES_NAME_"
-              value={value}
-              onChange={(e) => setValue(e.target.value.toUpperCase())}
-              onKeyDown={(e) => e.key === "Enter" && handleSearch()}
-              autoFocus
-            />
-          </div>
+      <div className="cinema-border p-8 md:p-12 max-w-2xl w-full relative bg-[#1a0505]">
+        <h1 className="text-5xl md:text-7xl font-bold mb-6 text-[#c5a059] font-serif marquee-text border-b-4 border-double border-[#c5a059] pb-4 inline-block">
+          NOW SHOWING
+        </h1>
+        <p className="text-[#f0e6d2] mb-8 text-xl font-serif italic text-opacity-80">
+          "The Greatest Ratings on Earth"
+        </p>
+
+        <div className="flex flex-col md:flex-row gap-0 border-4 border-[#c5a059]">
+          <input
+            className="flex-1 bg-[#2a0808] text-[#f0e6d2] p-4 text-xl font-serif placeholder-[#8a5c5c] outline-none"
+            placeholder="Type Movie Title..."
+            value={value}
+            onChange={(e) => setValue(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && handleSearch()}
+            autoFocus
+          />
+          <button
+            onClick={handleSearch}
+            disabled={loading}
+            className="px-8 py-3 bg-[#8a0c0c] text-[#c5a059] font-bold text-lg hover:bg-[#a61313] transition-colors border-l-4 border-[#c5a059] uppercase tracking-widest"
+          >
+            {loading ? "Reeling..." : "Admit One"}
+          </button>
         </div>
-        <button
-          onClick={handleSearch}
-          disabled={loading}
-          className="mt-6 px-8 py-3 bg-neon-cyan text-black font-bold tracking-widest hover:bg-white hover:text-black hover:shadow-[0_0_15px_#00ffff] transition-all border-2 border-neon-cyan uppercase"
-        >
-          {loading ? "LOADING..." : "EXECUTE"}
-        </button>
+      </div>
+
+      {/* Decorative Lights Bottom */}
+      <div className="flex gap-4 mt-8">
+        {[...Array(8)].map((_, i) => <div key={i} className="bulb" style={{ animationDelay: `${i * 0.1}s` }} />)}
       </div>
     </div>
   );
