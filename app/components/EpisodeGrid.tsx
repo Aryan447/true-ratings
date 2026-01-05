@@ -150,15 +150,18 @@ export default function EpisodeGrid({ seasons, globalBest, globalWorst, selected
 
             {/* Season Navigation Bar (Only in Default Mode & Modern) */}
             {sortBy === 'default' && !isRetro && (
-                <div className="sticky top-16 md:top-0 z-40 bg-black/80 backdrop-blur-md py-4 mb-8 border-b border-white/10 overflow-x-auto no-scrollbar transition-all duration-300">
-                    <div className="flex gap-2 px-4 whitespace-nowrap">
+                <div className="sticky top-16 md:top-0 z-40 bg-black/80 backdrop-blur-xl py-3 mb-8 border-b border-white/10 overflow-x-auto no-scrollbar transition-all duration-300 shadow-lg">
+                    <div className="flex gap-3 px-4 md:justify-center whitespace-nowrap min-w-max">
                         {Object.keys(seasons).map((season) => (
                             <button
                                 key={season}
                                 onClick={() => scrollToSeason(season)}
-                                className="px-4 py-1.5 rounded-full text-sm font-medium bg-white/5 hover:bg-white/10 border border-white/10 transition-colors text-gray-300 hover:text-white"
+                                className="px-5 py-2 rounded-full text-sm font-semibold 
+                                bg-zinc-900/50 hover:bg-zinc-800 border border-white/10 hover:border-white/30 
+                                transition-all duration-200 text-gray-400 hover:text-white hover:scale-105 active:scale-95 shadow-sm"
                             >
-                                {t.season} {season}
+                                <span className="opacity-50 font-normal mr-1">{t.season}</span>
+                                <span className="text-white">{season}</span>
                             </button>
                         ))}
                     </div>
