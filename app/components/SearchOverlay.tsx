@@ -25,7 +25,7 @@ export default function SearchOverlay({ onSearch, loading, hasSearched }: Search
 
     // Load recent searches on mount
     useEffect(() => {
-        const saved = localStorage.getItem("failed_follies_recent");
+        const saved = localStorage.getItem("true_ratings_recent");
         if (saved) {
             setRecentSearches(JSON.parse(saved));
         }
@@ -35,13 +35,13 @@ export default function SearchOverlay({ onSearch, loading, hasSearched }: Search
     const addToHistory = (term: string) => {
         const newHistory = [term, ...recentSearches.filter(s => s !== term)].slice(0, MAX_RECENT_SEARCHES);
         setRecentSearches(newHistory);
-        localStorage.setItem("failed_follies_recent", JSON.stringify(newHistory));
+        localStorage.setItem("true_ratings_recent", JSON.stringify(newHistory));
     };
 
     const clearHistory = (e: React.MouseEvent) => {
         e.stopPropagation();
         setRecentSearches([]);
-        localStorage.removeItem("failed_follies_recent");
+        localStorage.removeItem("true_ratings_recent");
     };
 
     useEffect(() => {

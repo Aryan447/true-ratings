@@ -35,6 +35,7 @@ export default function EpisodeGrid({ seasons, globalBest, globalWorst }: Episod
     const isRetro = theme === 'retro';
     const seasonRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
     const [sortBy, setSortBy] = React.useState<'default' | 'best' | 'worst'>('default');
+    const [selectedEpisode, setSelectedEpisode] = React.useState<Episode | null>(null);
 
     const getSeasonAvg = (episodes: Episode[]) => {
         const ratings = episodes.map(e => parseFloat(e.imdbRating)).filter(r => !isNaN(r));
@@ -76,6 +77,7 @@ export default function EpisodeGrid({ seasons, globalBest, globalWorst }: Episod
             return (
                 <div
                     key={i}
+                    onClick={() => setSelectedEpisode({ ...ep, season: Number(seasonNum) })}
                     className="flex-shrink-0 w-32 bg-[#e6dcc3] text-black p-2 rounded-sm shadow-md relative group cursor-pointer hover:sepia transition-all"
                 >
                     <div className="border border-black h-full p-2 flex flex-col justify-between text-center relative">
@@ -88,7 +90,7 @@ export default function EpisodeGrid({ seasons, globalBest, globalWorst }: Episod
         }
 
         return (
-            <div key={i} className="relative group cursor-pointer">
+            <div key={i} className="relative group cursor-pointer" onClick={() => setSelectedEpisode({ ...ep, season: Number(seasonNum) })}>
                 <div
                     className={`
                         aspect-[3/4] rounded-md flex flex-col items-center justify-end pb-2 text-center
@@ -200,6 +202,76 @@ export default function EpisodeGrid({ seasons, globalBest, globalWorst }: Episod
                     })
                 )}
             </div>
+
+            {/* Episode Modal */}
+            {selectedEpisode && (
+                <div className="fixed inset-0 z-[200] flex items-center justify-center px-4">
+                    <div
+                        className="absolute inset-0 bg-black/80 backdrop-blur-sm"
+                        onClick={() => setSelectedEpisode(null)}
+                    />
+                    <div
+                        className={`relative z-10 w-full max-w-lg p-8 rounded-2xl shadow-2xl transform transition-all animate-fade-in
+                            ${isRetro
+                                ? 'bg-[#1a0505] border-4 border-[#c5a059] shadow-[0_0_50px_rgba(197,160,89,0.2)]'
+                                : 'bg-zinc-900 border border-white/10'
+                            }`}
+                    >
+                        <button
+                            onClick={() => setSelectedEpisode(null)}
+                            className={`absolute top-4 right-4 p-2 rounded-full transition-colors
+                                ${isRetro
+                                    ? 'text-[#c5a059] hover:bg-[#c5a059] hover:text-black border border-[#c5a059]'
+                                    : 'text-gray-400 hover:text-white hover:bg-white/10'
+                                }`}
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+
+                        <div className="space-y-6">
+                            <div className={`text-sm font-bold uppercase tracking-widest
+                                ${isRetro ? 'text-[#8a0c0c]' : 'text-emerald-500'}`}>
+                                {isRetro ? 'Classified Record' : 'Episode Details'}
+                            </div>
+
+                            <h2 className={`text-3xl font-bold leading-tight
+                                ${isRetro ? 'text-[#c5a059] font-mono uppercase text-shadow-retro' : 'text-white'}`}>
+                                {selectedEpisode.Title}
+                            </h2>
+
+                            <div className="flex items-center gap-4">
+                                <div className={`px-4 py-2 rounded-lg font-bold text-xl
+                                    ${isRetro
+                                        ? 'bg-[#8a0c0c] text-[#c5a059] border-2 border-[#c5a059]'
+                                        : 'bg-white/10 text-white'
+                                    }`}>
+                                    S{selectedEpisode.season} E{selectedEpisode.Episode}
+                                </div>
+                                <div className={`text-4xl font-bold
+                                    ${isRetro ? 'text-[#c5a059] font-mono' : 'text-emerald-400'}`}>
+                                    {selectedEpisode.imdbRating}
+                                    <span className="text-lg opacity-50 ml-1">/10</span>
+                                </div>
+                            </div>
+
+                            <a
+                                href={`https://www.imdb.com/title/${selectedEpisode.imdbID}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className={`block w-full py-4 text-center font-bold uppercase tracking-widest transition-all
+                                    ${isRetro
+                                        ? 'bg-transparent text-[#c5a059] border-2 border-[#c5a059] hover:bg-[#c5a059] hover:text-black'
+                                        : 'bg-[#F5C518] text-black hover:bg-[#E2B616] rounded-lg'
+                                    }`}
+                            >
+                                {isRetro ? 'Access IMDB Archives' : 'View on IMDb'}
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
