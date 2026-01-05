@@ -4,6 +4,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import SearchOverlay from "./components/SearchOverlay";
 import SeriesInfo from "./components/SeriesInfo";
 import EpisodeGrid from "./components/EpisodeGrid";
+import EpisodeModal from "./components/EpisodeModal"; // NEW
 import RatingChart from "./components/RatingChart";
 import TrendingRow from "./components/TrendingRow";
 import SeriesSkeleton from "./components/Skeletons";
@@ -263,6 +264,7 @@ function HomeContent() {
         {t.dataProvidedBy}
       </footer>
       <BackToTop />
+      <EpisodeModal episode={selectedEpisode} onClose={() => setSelectedEpisode(null)} />
     </main>
   );
 }
