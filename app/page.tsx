@@ -1,32 +1,38 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import SearchOverlay from "./components/SearchOverlay";
 import SeriesInfo from "./components/SeriesInfo";
 import EpisodeGrid from "./components/EpisodeGrid";
 import RatingChart from "./components/RatingChart";
 import TrendingRow from "./components/TrendingRow";
+import SeriesSkeleton from "./components/Skeletons";
 import { getSeriesData, getTrendingSeries } from "./actions/getSeriesData";
-import { useLanguage } from "./context/LanguageContext"; // Import useLanguage
+import { useLanguage } from "./context/LanguageContext";
 import BackToTop from "./components/BackToTop";
 
 import { SeriesData, Episode, SearchResult } from "./types";
 
 // Curated IDs for Trending Sections
-const WORLD_IDS = [82, 169, 2993, 15299, 16121, 1371, 66, 431, 305]; // GoT, BB, Stranger Things, The Boys, Succession, Westworld, Big Bang, Friends, Black Mirror
-const INDIA_IDS = [36082, 39537, 42878, 50824, 47353, 33368, 62237]; // Sacred Games, Mirzapur, Family Man, Scam 1992, Panchayat, Made in Heaven, Farzi
+const WORLD_IDS = [82, 169, 2993, 15299, 16121, 1371, 66, 431, 305];
+const INDIA_IDS = [36082, 39537, 42878, 50824, 47353, 33368, 62237];
 
-export default function Home() {
+function HomeContent() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const query = searchParams.get("q");
+
   const [series, setSeries] = useState<SeriesData | null>(null);
   const [seasons, setSeasons] = useState<{ [key: number]: Episode[] }>({});
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [globalBest, setGlobalBest] = useState<{ season: number; ep: Episode } | null>(null);
   const [globalWorst, setGlobalWorst] = useState<{ season: number; ep: Episode } | null>(null);
-  const [hasSearched, setHasSearched] = useState(false);
 
   const [worldTrending, setWorldTrending] = useState<SearchResult[]>([]);
   const [indiaTrending, setIndiaTrending] = useState<SearchResult[]>([]);
 
-  const { t, toggleLanguage, language } = useLanguage(); // Use hook
+  const { t, toggleLanguage, language } = useLanguage();
 
   // Fetch Trending Data on Mount
   useEffect(() => {
@@ -41,20 +47,29 @@ export default function Home() {
     fetchTrending();
   }, []);
 
+  // Sync state with URL query
+  useEffect(() => {
+    if (query) {
+      fetchSeries(query);
+    } else {
+      // Reset if no query (e.g. back to home)
+      setSeries(null);
+      setSeasons({});
+      setError(null);
+    }
+  }, [query]);
+
   // Focus on top of page when results load
   useEffect(() => {
-    if (series) {
+    if (series || loading) {
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
-  }, [series]);
+  }, [series, loading]);
 
   const fetchSeries = async (title: string) => {
     setLoading(true);
-    setSeries(null);
-    setSeasons({});
-    setGlobalBest(null);
-    setGlobalWorst(null);
-    setHasSearched(true);
+    setError(null);
+    setSeries(null); // Clear previous results immediately for skeleton view
 
     try {
       const data = await getSeriesData(title);
@@ -64,14 +79,22 @@ export default function Home() {
         setGlobalBest(data.BestEp);
         setGlobalWorst(data.WorstEp);
       } else {
-        alert(t.seriesNotFound);
+        setError(t.seriesNotFound);
       }
     } catch (e) {
       console.error(e);
-      alert(t.errorFetching);
+      setError(t.errorFetching);
     }
     setLoading(false);
   };
+
+  const handleSearch = (title: string) => {
+    // Update URL, which triggers the effect
+    router.push(`/?q=${encodeURIComponent(title)}`);
+  };
+
+  // Determine if we should show the "searched" layout
+  const hasSearched = !!query;
 
   return (
     <main className="min-h-screen py-8 px-4 flex flex-col items-center relative">
@@ -83,7 +106,7 @@ export default function Home() {
       </button>
 
       <SearchOverlay
-        onSearch={fetchSeries}
+        onSearch={handleSearch}
         loading={loading}
         hasSearched={hasSearched}
       />
@@ -92,17 +115,28 @@ export default function Home() {
       {!hasSearched && !loading && (
         <div className="w-full animate-fade-in mt-10">
           {worldTrending.length > 0 && (
-            <TrendingRow title={t.trendingWorld} items={worldTrending} onSelect={fetchSeries} />
+            <TrendingRow title={t.trendingWorld} items={worldTrending} onSelect={handleSearch} />
           )}
           {indiaTrending.length > 0 && (
-            <TrendingRow title={t.trendingIndia} items={indiaTrending} onSelect={fetchSeries} />
+            <TrendingRow title={t.trendingIndia} items={indiaTrending} onSelect={handleSearch} />
           )}
         </div>
       )}
 
-      {loading && hasSearched && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black/50 backdrop-blur-sm z-50">
-          <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-yellow-500"></div>
+      {/* Loading Skeleton */}
+      {loading && hasSearched && <SeriesSkeleton />}
+
+      {/* Error Message */}
+      {error && !loading && (
+        <div className="mt-10 p-6 bg-red-900/20 border border-red-500/50 rounded-lg text-center animate-fade-in">
+          <p className="text-xl text-red-400 font-bold mb-2">Error</p>
+          <p className="text-gray-300">{error}</p>
+          <button
+            onClick={() => router.push('/')}
+            className="mt-4 text-sm text-white/50 hover:text-white underline"
+          >
+            Go Home
+          </button>
         </div>
       )}
 
@@ -129,5 +163,13 @@ export default function Home() {
       </footer>
       <BackToTop />
     </main>
+  );
+}
+
+export default function Home() {
+  return (
+    <Suspense>
+      <HomeContent />
+    </Suspense>
   );
 }
