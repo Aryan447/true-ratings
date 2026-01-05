@@ -37,6 +37,7 @@ export default function EpisodeGrid({ seasons, globalBest, globalWorst, selected
     const isRetro = theme === 'retro';
     const seasonRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
     const [sortBy, setSortBy] = React.useState<'default' | 'best' | 'worst'>('default');
+    const [filterQuery, setFilterQuery] = React.useState("");
 
     // Use prop if available, otherwise local (for backward compat if needed, but we'll always pass prop)
     // Actually simpler to just rely on prop. But if I remove line 38 I need to update references too if they differ.
@@ -59,21 +60,29 @@ export default function EpisodeGrid({ seasons, globalBest, globalWorst, selected
         }
     };
 
-    // Flatten and sort if not default
+    // Flatten and sort if not default OR if filtering
     const sortedEpisodes = React.useMemo(() => {
-        if (sortBy === 'default') return null;
+        if (sortBy === 'default' && !filterQuery) return null;
 
         // Ensure season is attached to episode object
         const all = Object.entries(seasons).flatMap(([s, eps]) =>
             eps.map(e => ({ ...e, season: Number(s) }))
         );
 
-        return all.sort((a, b) => {
+        const filtered = all.filter(ep =>
+            ep.Title.toLowerCase().includes(filterQuery.toLowerCase()) ||
+            String(ep.Episode).includes(filterQuery) ||
+            String(ep.season).includes(filterQuery)
+        );
+
+        if (sortBy === 'default') return filtered; // Just filtered, kept in default order (which is usually chrono per season, but flattened here)
+
+        return filtered.sort((a, b) => {
             const ra = parseFloat(a.imdbRating) || 0;
             const rb = parseFloat(b.imdbRating) || 0;
             return sortBy === 'best' ? rb - ra : ra - rb;
         });
-    }, [sortBy, seasons]);
+    }, [sortBy, seasons, filterQuery]);
 
     const renderCard = (ep: Episode, i: number, explicitSeason?: number | string) => {
         const rating = parseFloat(ep.imdbRating);
@@ -131,42 +140,41 @@ export default function EpisodeGrid({ seasons, globalBest, globalWorst, selected
 
     return (
         <div className="w-full max-w-7xl mx-auto relative">
-            {/* Sort Controls */}
-            <div className="flex justify-center mb-8 gap-4">
-                {(['default', 'best', 'worst'] as const).map((mode) => (
-                    <button
-                        key={mode}
-                        onClick={() => setSortBy(mode)}
-                        className={`px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider transition-all
-                            ${sortBy === mode
-                                ? (isRetro ? 'bg-yellow-500 text-black border-2 border-red-500' : 'bg-white text-black')
-                                : (isRetro ? 'bg-black text-yellow-500 border border-yellow-500 opacity-50' : 'bg-white/10 text-gray-400 hover:bg-white/20')}
-                        `}
-                    >
-                        {mode === 'default' ? t.season : (mode === 'best' ? 'Top Rated' : 'Lowest Rated')}
-                    </button>
-                ))}
-            </div>
-
-            {/* Season Navigation Bar (Only in Default Mode & Modern) */}
-            {sortBy === 'default' && !isRetro && (
-                <div className="sticky top-16 md:top-0 z-40 bg-black/80 backdrop-blur-xl py-3 mb-8 border-b border-white/10 overflow-x-auto no-scrollbar transition-all duration-300 shadow-lg">
-                    <div className="flex gap-3 px-4 md:justify-center whitespace-nowrap min-w-max">
-                        {Object.keys(seasons).map((season) => (
-                            <button
-                                key={season}
-                                onClick={() => scrollToSeason(season)}
-                                className="px-5 py-2 rounded-full text-sm font-semibold 
-                                bg-zinc-900/50 hover:bg-zinc-800 border border-white/10 hover:border-white/30 
-                                transition-all duration-200 text-gray-400 hover:text-white hover:scale-105 active:scale-95 shadow-sm"
-                            >
-                                <span className="opacity-50 font-normal mr-1">{t.season}</span>
-                                <span className="text-white">{season}</span>
-                            </button>
-                        ))}
-                    </div>
+            {/* Controls Bar: Sort & Filter */}
+            <div className="flex flex-col md:flex-row justify-between items-center mb-8 gap-4 px-4 bg-white/5 p-4 rounded-2xl backdrop-blur-md border border-white/5">
+                {/* Sort Controls */}
+                <div className="flex gap-2 bg-black/40 p-1 rounded-full border border-white/10">
+                    {(['default', 'best', 'worst'] as const).map((mode) => (
+                        <button
+                            key={mode}
+                            onClick={() => setSortBy(mode)}
+                            className={`px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider transition-all
+                                ${sortBy === mode
+                                    ? (isRetro ? 'bg-yellow-500 text-black border-2 border-red-500' : 'bg-white text-black')
+                                    : (isRetro ? 'text-yellow-500 hover:text-yellow-300' : 'text-gray-400 hover:text-white hover:bg-white/10')}
+                            `}
+                        >
+                            {mode === 'default' ? t.season : (mode === 'best' ? 'Top Rated' : 'Lowest Rated')}
+                        </button>
+                    ))}
                 </div>
-            )}
+
+                {/* Episode Filter Input */}
+                <div className="relative w-full md:w-64">
+                    <input
+                        type="text"
+                        placeholder={t.searchPlaceholder || "Filter episodes..."}
+                        value={filterQuery}
+                        onChange={(e) => setFilterQuery(e.target.value)}
+                        className={`w-full px-4 py-2 rounded-full bg-black/40 border border-white/10 focus:border-white/30 outline-none transition-all
+                            ${isRetro ? 'text-yellow-500 placeholder-yellow-900 font-mono' : 'text-white placeholder-gray-500'}
+                        `}
+                    />
+                    <svg xmlns="http://www.w3.org/2000/svg" className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                </div>
+            </div>
 
             {/* Content */}
             <div className="space-y-12">
