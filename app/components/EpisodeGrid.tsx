@@ -90,12 +90,15 @@ export default function EpisodeGrid({ seasons, globalBest, globalWorst, selected
         const invalid = isNaN(rating);
         const seasonNum = ep.season || explicitSeason;
 
+        const isGolden = rating >= 9.5;
+
         if (isRetro) {
             return (
                 <div
                     key={i}
                     onClick={() => onSelectEpisode?.({ ...ep, season: Number(seasonNum) })}
-                    className="flex-shrink-0 w-32 bg-[#e6dcc3] text-black p-2 rounded-sm shadow-md relative group cursor-pointer hover:sepia transition-all"
+                    className={`flex-shrink-0 w-32 bg-[#e6dcc3] text-black p-2 rounded-sm shadow-md relative group cursor-pointer hover:sepia transition-all
+                        ${isGolden ? 'golden-glow ring-4 ring-yellow-400' : ''}`}
                 >
                     <div className="border border-black h-full p-2 flex flex-col justify-between text-center relative">
                         <span className="font-bold text-xs uppercase tracking-tighter mb-1 line-clamp-1">{ep.Title}</span>
@@ -115,6 +118,7 @@ export default function EpisodeGrid({ seasons, globalBest, globalWorst, selected
                         ${invalid ? "bg-gray-800/50" : getColor(rating, isRetro)}
                         opacity-90 group-hover:opacity-100 shadow-md group-hover:shadow-xl
                         ${isBest ? "ring-1 ring-white" : ""}
+                        ${isGolden ? "golden-glow shadow-[0_0_20px_#ffd700]" : ""}
                     `}
                 >
                     <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/60 rounded-md"></div>

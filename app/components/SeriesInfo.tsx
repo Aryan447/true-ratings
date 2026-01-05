@@ -4,6 +4,7 @@ import React from "react";
 import CastRow from "./CastRow";
 import { useTheme } from "../context/ThemeContext";
 import { useLanguage } from "../context/LanguageContext";
+import { useWatchlist } from "../hooks/useWatchlist";
 
 import { SeriesData, Episode } from "../types";
 
@@ -11,12 +12,14 @@ interface SeriesInfoProps {
     series: SeriesData;
     globalBest: { season: number; ep: Episode } | null;
     globalWorst: { season: number; ep: Episode } | null;
+    onCompare?: () => void;
 }
 
-export default function SeriesInfo({ series, globalBest, globalWorst }: SeriesInfoProps) {
+export default function SeriesInfo({ series, globalBest, globalWorst, onCompare }: SeriesInfoProps) {
     const { theme } = useTheme();
     const { t } = useLanguage();
     const isRetro = theme === 'retro';
+    const { addToWatchlist, removeFromWatchlist, isInWatchlist } = useWatchlist();
 
     const totalEpisodes = React.useMemo(() => {
         return Object.values(series.seasons).reduce((acc, season) => acc + season.length, 0);
@@ -218,6 +221,17 @@ export default function SeriesInfo({ series, globalBest, globalWorst }: SeriesIn
                     </div>
 
                     <div className="mt-8 flex flex-wrap gap-4">
+                        <button
+                            onClick={onCompare}
+                            className={`px-6 py-3 rounded-lg font-bold transition-colors flex items-center gap-2
+                                ${isRetro ? 'bg-blue-900/30 text-blue-400 border-2 border-blue-500 hover:bg-blue-900/50 uppercase tracking-widest' : 'bg-blue-600/20 text-blue-400 hover:bg-blue-600/30'}`}
+                        >
+                            {isRetro ? "VS MODE" : "Compare"}
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                <path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM11 13a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                            </svg>
+                        </button>
+
                         <a
                             href={`https://www.imdb.com/title/${series.imdbID}`}
                             target="_blank"
@@ -246,6 +260,42 @@ export default function SeriesInfo({ series, globalBest, globalWorst }: SeriesIn
                             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                                 <path d="M15 8a3 3 0 10-2.977-2.63l-4.94 2.47a3 3 0 100 4.319l4.94 2.47a3 3 0 10.895-1.789l-4.94-2.47a3.027 3.027 0 000-.74l4.94-2.47C13.456 7.68 14.19 8 15 8z" />
                             </svg>
+                        </button>
+
+                        <button
+                            onClick={() => {
+                                if (isInWatchlist(Number(series.imdbID) || 0)) {
+                                    removeFromWatchlist(Number(series.imdbID) || 0);
+                                } else {
+                                    addToWatchlist({
+                                        id: Number(series.imdbID) || 0,
+                                        title: series.Title,
+                                        year: series.Year,
+                                        rating: series.imdbRating,
+                                        poster: series.Poster
+                                    });
+                                }
+                            }}
+                            className={`px-6 py-3 rounded-lg font-bold transition-colors flex items-center gap-2
+                                ${isRetro
+                                    ? 'bg-transparent text-[#c5a059] border-2 border-[#c5a059] hover:bg-[#c5a059] hover:text-[#1a0505] uppercase tracking-widest'
+                                    : 'bg-white/10 text-white hover:bg-white/20'}`}
+                        >
+                            {isInWatchlist(Number(series.imdbID) || 0) ? (
+                                <>
+                                    Saved
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-red-500 fill-current" viewBox="0 0 20 20">
+                                        <path fillRule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clipRule="evenodd" />
+                                    </svg>
+                                </>
+                            ) : (
+                                <>
+                                    Save
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                                    </svg>
+                                </>
+                            )}
                         </button>
                     </div>
 

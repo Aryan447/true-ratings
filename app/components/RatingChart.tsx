@@ -1,6 +1,7 @@
 "use client";
 import React from "react";
 import { useTheme } from "../context/ThemeContext";
+import { useLanguage } from "../context/LanguageContext";
 import {
     LineChart,
     Line,
@@ -17,31 +18,76 @@ import { Episode } from "../types";
 
 interface RatingChartProps {
     seasons: { [key: number]: Episode[] };
+    comparisonSeasons?: { [key: number]: Episode[] };
+    comparisonTitle?: string;
 }
 
-export default function RatingChart({ seasons }: RatingChartProps) {
+export default function RatingChart({ seasons, comparisonSeasons, comparisonTitle }: RatingChartProps) {
+    const { theme } = useTheme();
+    const { t } = useLanguage();
+    const isRetro = theme === 'retro';
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const getChartColor = (rating: number) => {
+        if (isRetro) return "#c5a059";
+        if (rating >= 9) return "#10b981";
+        if (rating >= 7.5) return "#f59e0b";
+        if (rating >= 6) return "#f97316";
+        return "#ef4444";
+    };
+
     const data = React.useMemo(() => {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const points: any[] = [];
-        Object.entries(seasons).forEach(([seasonStr, episodes]) => {
-            episodes.forEach((ep) => {
+        let globalIndex = 1;
+
+        Object.entries(seasons).forEach(([season, episodes]) => {
+            episodes.forEach(ep => {
                 const rating = parseFloat(ep.imdbRating);
                 if (!isNaN(rating)) {
                     points.push({
-                        name: `S${seasonStr}E${ep.Episode}`,
-                        rating: rating,
+                        name: `S${season}E${ep.Episode}`,
                         title: ep.Title,
-                        season: parseInt(seasonStr),
-                        episode: parseInt(ep.Episode)
+                        rating: rating,
+                        season: Number(season),
+                        episode: Number(ep.Episode),
+                        index: globalIndex++,
+                        // Original series data
+                        ratingA: rating
                     });
                 }
             });
         });
-        return points;
-    }, [seasons]);
 
-    const { theme } = useTheme();
-    const isRetro = theme === 'retro';
+        // Merge comparison data if available
+        if (comparisonSeasons) {
+            let compIndex = 1;
+            Object.entries(comparisonSeasons).forEach(([season, episodes]) => {
+                episodes.forEach(ep => {
+                    const rating = parseFloat(ep.imdbRating);
+                    // Match by global index (episode count)
+                    if (!isNaN(rating)) {
+                        if (points[compIndex - 1]) {
+                            points[compIndex - 1].ratingB = rating;
+                            points[compIndex - 1].titleB = ep.Title;
+                        } else {
+                            // If comparison is longer, add new points
+                            points.push({
+                                name: `S${season}E${ep.Episode}`, // Might be misleading if seasons mismatch, but acceptable for comparison
+                                title: `(Comp) ${ep.Title}`,
+                                season: Number(season),
+                                episode: Number(ep.Episode),
+                                index: compIndex,
+                                ratingB: rating
+                            });
+                        }
+                        compIndex++;
+                    }
+                });
+            });
+        }
+
+        return points;
+    }, [seasons, comparisonSeasons]);
 
     if (data.length === 0) return null;
 
@@ -57,37 +103,77 @@ export default function RatingChart({ seasons }: RatingChartProps) {
                         <CartesianGrid strokeDasharray="3 3" stroke="#003300" />
                         <XAxis
                             dataKey="name"
-                            hide={true}
-                            interval="preserveStartEnd"
+                            hide={!isRetro}
+                            stroke={isRetro ? "#8a0c0c" : "#666"}
+                            tick={{ fill: isRetro ? "#c5a059" : "#999", fontSize: 10 }}
                         />
                         <YAxis
-                            domain={['dataMin - 0.5', 'dataMax + 0.5']}
-                            stroke="#00ff00"
-                            fontSize={12}
-                            tick={{ fill: '#00ff00', fontFamily: 'monospace' }}
-                            tickLine={{ stroke: '#00ff00' }}
+                            domain={[0, 10]}
+                            ticks={[0, 2, 4, 6, 8, 10]}
+                            stroke={isRetro ? "#8a0c0c" : "#666"}
+                            tick={{ fill: isRetro ? "#c5a059" : "#999" }}
                         />
                         <Tooltip
-                            contentStyle={{
-                                backgroundColor: '#000',
-                                border: '1px solid #00ff00',
-                                fontFamily: 'monospace',
-                                color: '#00ff00'
+                            content={({ active, payload }) => {
+                                if (active && payload && payload.length) {
+                                    const d = payload[0].payload;
+                                    return (
+                                        <div className={`p-3 border rounded shadow-lg ${isRetro ? 'bg-black border-[#c5a059] text-[#c5a059]' : 'bg-gray-900 border-gray-700 text-white'}`}>
+                                            <p className="font-bold border-b border-gray-700 mb-2 pb-1">{d.name}</p>
+
+                                            {/* Series A */}
+                                            {d.ratingA !== undefined && (
+                                                <div className="mb-1">
+                                                    <span className="text-xs opacity-70">Main: </span>
+                                                    <span style={{ color: isRetro ? '#c5a059' : '#10b981' }}>{d.title}</span>
+                                                    <div className="font-mono font-bold text-lg">{d.ratingA} ★</div>
+                                                </div>
+                                            )}
+
+                                            {/* Series B */}
+                                            {d.ratingB !== undefined && (
+                                                <div className="mt-2 pt-2 border-t border-gray-700/50">
+                                                    <span className="text-xs opacity-70">Comp: </span>
+                                                    <span style={{ color: isRetro ? '#ef4444' : '#3b82f6' }}>{d.titleB || "Ep " + d.index}</span>
+                                                    <div className="font-mono font-bold text-lg" style={{ color: isRetro ? '#ef4444' : '#3b82f6' }}>
+                                                        {d.ratingB} ★
+                                                    </div>
+                                                </div>
+                                            )}
+                                        </div>
+                                    );
+                                }
+                                return null;
                             }}
-                            itemStyle={{ color: '#00ff00' }}
-                            labelStyle={{ color: '#00cc00', marginBottom: '0.25rem' }}
-                            cursor={{ stroke: '#00ff00', strokeWidth: 1 }}
                         />
                         <Line
-                            type="step"
-                            dataKey="rating"
-                            stroke="#00ff00"
-                            strokeWidth={2}
-                            dot={false}
-                            activeDot={{ r: 4, fill: '#00ff00' }}
-                            animationDuration={500}
+                            type="monotone"
+                            dataKey="ratingA" // Changed from 'rating'
+                            stroke={isRetro ? "#c5a059" : "#10b981"}
+                            strokeWidth={isRetro ? 2 : 3}
+                            dot={{ r: isRetro ? 2 : 0, fill: isRetro ? "#c5a059" : "#10b981" }}
+                            activeDot={{ r: 6, fill: isRetro ? "#fff" : "#fff" }}
+                            animationDuration={1500}
                         />
-                        <Brush dataKey="name" height={30} stroke="#8884d8" alwaysShowText={false} />
+                        {comparisonSeasons && (
+                            <Line
+                                type="monotone"
+                                dataKey="ratingB"
+                                stroke={isRetro ? "#ef4444" : "#3b82f6"} // Red or Blue for contrast
+                                strokeWidth={isRetro ? 2 : 3}
+                                dot={{ r: 0 }}
+                                activeDot={{ r: 6 }}
+                                animationDuration={1500}
+                                connectNulls
+                            />
+                        )}
+                        <Brush
+                            dataKey="index"
+                            height={30}
+                            stroke={isRetro ? "#c5a059" : "#888888"}
+                            fill={isRetro ? "#1a0505" : "#1f2937"}
+                            tickFormatter={() => ""}
+                        />
                     </LineChart>
                 </ResponsiveContainer>
             </div>

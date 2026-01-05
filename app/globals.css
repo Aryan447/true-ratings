@@ -92,9 +92,38 @@ body {
   pointer-events: none;
 }
 
+@keyframes golden-pulse {
+  0% { box-shadow: 0 0 5px #ffd700, 0 0 10px #ffd700; }
+  50% { box-shadow: 0 0 20px #ffd700, 0 0 30px #ffae00; }
+  100% { box-shadow: 0 0 5px #ffd700, 0 0 10px #ffd700; }
+}
+
+.golden-glow {
+  border-color: #ffd700 !important;
+  color: #ffd700 !important;
+  animation: golden-pulse 3s infinite;
+  position: relative;
+  z-index: 20;
+}
+
+.golden-glow::after {
+  content: '★';
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  color: #ffd700;
+  font-size: 1.5rem;
+  filter: drop-shadow(0 0 5px black);
+  animation: spin-slow 10s linear infinite;
+}
+
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
 /* Retro Marquee Effect */
 .marquee-text {
-  text-transform: uppercase;
   text-shadow: 0 0 5px var(--cinema-gold), 2px 2px 0px #000;
   letter-spacing: 0.1em;
 }

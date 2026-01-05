@@ -10,11 +10,13 @@ interface SearchOverlayProps {
     onSearch: (query: string) => void;
     loading: boolean;
     hasSearched: boolean;
+    mode?: 'search' | 'compare';
+    onCancelCompare?: () => void;
 }
 
 const MAX_RECENT_SEARCHES = 3;
 
-export default function SearchOverlay({ onSearch, loading, hasSearched }: SearchOverlayProps) {
+export default function SearchOverlay({ onSearch, loading, hasSearched, mode = 'search', onCancelCompare }: SearchOverlayProps) {
     const { theme } = useTheme();
     const { t } = useLanguage();
     const [query, setQuery] = useState("");
@@ -130,29 +132,34 @@ export default function SearchOverlay({ onSearch, loading, hasSearched }: Search
                 <>
                     {isRetro ? (
                         /* Classic Cinema Header */
-                        <div className="mb-10 text-center relative p-4 md:p-8 border-4 border-yellow-500 bg-black shadow-[0_0_30px_rgba(239,68,68,0.5)] w-full max-w-2xl">
-                            <div className="absolute top-0 left-0 w-full h-full border border-dashed border-red-500 opacity-50 pointer-events-none"></div>
-                            <h1 className="text-3xl md:text-7xl font-bold text-yellow-500 tracking-widest font-mono uppercase drop-shadow-md whitespace-nowrap overflow-hidden text-ellipsis">
-                                {t.nowShowing}
+                        <div className={`mb-10 text-center relative p-4 md:p-8 border-4 ${mode === 'compare' ? 'border-blue-500 shadow-[0_0_30px_rgba(59,130,246,0.5)]' : 'border-yellow-500 shadow-[0_0_30px_rgba(239,68,68,0.5)]'} bg-black w-full max-w-2xl`}>
+                            <div className={`absolute top-0 left-0 w-full h-full border border-dashed ${mode === 'compare' ? 'border-blue-500' : 'border-red-500'} opacity-50 pointer-events-none`}></div>
+                            <h1 className={`text-3xl md:text-7xl font-bold ${mode === 'compare' ? 'text-blue-500' : 'text-yellow-500'} tracking-widest font-mono uppercase drop-shadow-md whitespace-nowrap overflow-hidden text-ellipsis`}>
+                                {mode === 'compare' ? "VS MODE" : t.nowShowing}
                             </h1>
-                            <p className="text-red-500 mt-2 font-mono tracking-widest text-sm md:text-base">{t.trueRatingsCinema}</p>
-
-                            {/* Marquee Bulbs */}
-                            <div className="hidden md:block absolute -top-3 left-10 w-4 h-4 rounded-full bg-yellow-200 animate-pulse shadow-[0_0_10px_yellow]"></div>
-                            <div className="hidden md:block absolute -top-3 right-10 w-4 h-4 rounded-full bg-yellow-200 animate-pulse shadow-[0_0_10px_yellow]"></div>
-                            <div className="hidden md:block absolute -bottom-3 left-10 w-4 h-4 rounded-full bg-yellow-200 animate-pulse shadow-[0_0_10px_yellow]"></div>
-                            <div className="hidden md:block absolute -bottom-3 right-10 w-4 h-4 rounded-full bg-yellow-200 animate-pulse shadow-[0_0_10px_yellow]"></div>
+                            <p className={`${mode === 'compare' ? 'text-blue-400' : 'text-red-500'} mt-2 font-mono tracking-widest text-sm md:text-base`}>
+                                {mode === 'compare' ? "Select Challenger" : t.trueRatingsCinema}
+                            </p>
                         </div>
                     ) : (
                         /* Modern Header */
                         <div className="mb-8 w-full">
                             <h1 className="text-5xl md:text-8xl font-bold mb-4 md:mb-6 tracking-tighter bg-clip-text text-transparent bg-gradient-to-b from-white to-gray-500 animate-fade-in">
-                                {t.websiteTitle}
+                                {mode === 'compare' ? "Compare Series" : t.websiteTitle}
                             </h1>
                             <p className="text-gray-400 text-lg md:text-xl font-light max-w-lg mx-auto animate-fade-in">
-                                {t.websiteSubtitle}
+                                {mode === 'compare' ? "Find a show to compare against" : t.websiteSubtitle}
                             </p>
                         </div>
+                    )}
+
+                    {mode === 'compare' && (
+                        <button
+                            onClick={onCancelCompare}
+                            className="mb-8 text-gray-400 hover:text-white underline text-sm"
+                        >
+                            Cancel Comparison
+                        </button>
                     )}
                 </>
             )}
@@ -187,7 +194,7 @@ export default function SearchOverlay({ onSearch, loading, hasSearched }: Search
                             ${isRetro ? 'text-yellow-500 placeholder-red-900 font-mono text-lg md:text-xl px-4 md:px-6 py-3 md:py-4' : 'text-white placeholder-gray-500 text-base md:text-xl px-5 md:px-8 py-3 md:py-5'}
                             ${hasSearched && !isRetro ? 'px-4 py-3 text-base md:text-lg' : ''}
                         `}
-                        placeholder={isRetro ? t.insertTitle : t.searchPlaceholder}
+                        placeholder={mode === 'compare' ? "Search series to compare..." : (isRetro ? t.insertTitle : t.searchPlaceholder)}
                         value={query}
                         onChange={(e) => setQuery(e.target.value)}
                         onKeyDown={handleKeyDown}
