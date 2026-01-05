@@ -1,5 +1,6 @@
 "use client";
 import React, { useState, useEffect, useRef } from "react";
+import { useRouter } from "next/navigation";
 import { SearchResult } from "../types";
 import { searchSeries } from "../actions/getSeriesData";
 import { useTheme } from "../context/ThemeContext";
@@ -103,9 +104,11 @@ export default function SearchOverlay({ onSearch, loading, hasSearched }: Search
     }, [hasSearched]);
 
 
+    const router = useRouter();
+
     // Dynamic classes based on state (Centered Hero vs Top Bar)
     const containerClasses = hasSearched
-        ? "w-full max-w-6xl mx-auto mb-8 flex flex-col md:flex-row items-center gap-4 transition-all duration-500"
+        ? "w-full max-w-6xl mx-auto mb-8 flex flex-col md:flex-row items-center gap-4 transition-all duration-500 md:pr-40 lg:pr-72"
         : "flex flex-col items-center justify-center min-h-[50vh] text-center px-6 w-full relative z-20 transition-all duration-500";
 
     // Retro Marquee Logic
@@ -150,7 +153,9 @@ export default function SearchOverlay({ onSearch, loading, hasSearched }: Search
             {hasSearched && (
                 <div
                     className={`text-2xl font-bold cursor-pointer mb-4 md:mb-0 md:mr-4 flex-shrink-0 ${isRetro ? 'text-yellow-500 font-mono' : 'text-gradient'}`}
-                    onClick={() => window.location.reload()}
+                    onClick={() => {
+                        router.push('/');
+                    }}
                 >
                     {isRetro ? "TR CINEMA" : "True Ratings"}
                 </div>
