@@ -10,7 +10,7 @@ export default function HeaderControls() {
     const isRetro = theme === "retro";
 
     return (
-        <div className="fixed top-4 right-4 z-[100] flex items-center gap-2 md:gap-4">
+        <div className="fixed top-2 right-2 md:top-4 md:right-4 z-[100] flex items-center gap-2 md:gap-4 p-1 rounded-full bg-black/20 backdrop-blur-sm md:bg-transparent md:backdrop-blur-none transition-all">
             {/* Install App Prompt */}
             <InstallPrompt />
 

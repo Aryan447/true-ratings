@@ -9,6 +9,7 @@ import {
     CartesianGrid,
     Tooltip,
     ResponsiveContainer,
+    Brush
     // ReferenceLine
 } from "recharts";
 
@@ -86,6 +87,7 @@ export default function RatingChart({ seasons }: RatingChartProps) {
                             activeDot={{ r: 4, fill: '#00ff00' }}
                             animationDuration={500}
                         />
+                        <Brush dataKey="name" height={30} stroke="#8884d8" alwaysShowText={false} />
                     </LineChart>
                 </ResponsiveContainer>
             </div>
@@ -123,6 +125,13 @@ export default function RatingChart({ seasons }: RatingChartProps) {
                         dot={{ r: 2, fill: '#fbbf24', strokeWidth: 0 }}
                         activeDot={{ r: 6, fill: '#fff' }}
                         animationDuration={1500}
+                    />
+                    <Brush
+                        dataKey="name"
+                        height={30}
+                        stroke="#fbbf24"
+                        fill="#1a1a1a"
+                        tickFormatter={() => ""}
                     />
                     <defs>
                         <linearGradient id="gradientStroke" x1="0" y1="0" x2="1" y2="0">

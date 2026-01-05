@@ -18,7 +18,7 @@ export default function SeriesInfo({ series, globalBest, globalWorst }: SeriesIn
 
     if (isRetro) {
         return (
-            <div className="cinema-border p-8 mb-12 flex flex-col md:flex-row gap-8 items-start relative z-10 w-full max-w-6xl mx-auto bg-[#1a0505]">
+            <div className="cinema-border p-4 md:p-8 mb-12 flex flex-col md:flex-row gap-8 items-start relative z-10 w-full max-w-6xl mx-auto bg-[#1a0505]">
                 <div className="relative p-2 bg-black shadow-2xl">
                     <img
                         src={series.Poster}
@@ -92,7 +92,7 @@ export default function SeriesInfo({ series, globalBest, globalWorst }: SeriesIn
                 />
             )}
 
-            <div className="relative z-10 p-6 md:p-12 flex flex-col md:flex-row gap-8 md:gap-10 items-start">
+            <div className="relative z-10 p-4 md:p-12 flex flex-col md:flex-row gap-6 md:gap-10 items-start">
                 {/* Poster with Reflection */}
                 <div className="w-full md:w-[300px] flex-shrink-0 relative group perspective-1000">
                     <div className="relative rounded-xl overflow-hidden shadow-2xl transition-transform duration-500 transform group-hover:rotate-y-12">

@@ -140,7 +140,7 @@ export default function EpisodeGrid({ seasons, globalBest, globalWorst }: Episod
 
             {/* Season Navigation Bar (Only in Default Mode & Modern) */}
             {sortBy === 'default' && !isRetro && (
-                <div className="sticky top-0 z-40 bg-black/80 backdrop-blur-md py-4 mb-8 border-b border-white/10 overflow-x-auto no-scrollbar">
+                <div className="sticky top-16 md:top-0 z-40 bg-black/80 backdrop-blur-md py-4 mb-8 border-b border-white/10 overflow-x-auto no-scrollbar transition-all duration-300">
                     <div className="flex gap-2 px-4 whitespace-nowrap">
                         {Object.keys(seasons).map((season) => (
                             <button
