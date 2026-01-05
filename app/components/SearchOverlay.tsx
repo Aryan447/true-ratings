@@ -44,8 +44,15 @@ export default function SearchOverlay({ onSearch, loading, hasSearched }: Search
         localStorage.removeItem("true_ratings_recent");
     };
 
+    const isSelectionRef = useRef(false);
+
     useEffect(() => {
         const timeoutId = setTimeout(async () => {
+            if (isSelectionRef.current) {
+                isSelectionRef.current = false;
+                return;
+            }
+
             if (query.length < 2) {
                 setResults([]);
                 // Don't hide dropdown here if we want to show recent searches when empty
@@ -73,6 +80,7 @@ export default function SearchOverlay({ onSearch, loading, hasSearched }: Search
 
     const executeSearch = (term: string) => {
         if (!term.trim()) return;
+        isSelectionRef.current = true; // Prevent re-opening
         addToHistory(term);
         setQuery(term);
         setShowDropdown(false);

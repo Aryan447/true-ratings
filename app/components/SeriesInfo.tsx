@@ -249,30 +249,7 @@ export default function SeriesInfo({ series, globalBest, globalWorst }: SeriesIn
                         </button>
                     </div>
 
-                    <div className="mt-4 flex flex-wrap gap-4">
-                        {series.officialSite && (
-                            <a
-                                href={series.officialSite}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className={`px-4 py-2 rounded-lg text-sm font-bold transition-colors flex items-center gap-2
-                                    ${isRetro ? 'text-green-500 border border-green-500 hover:bg-green-900/20' : 'bg-blue-600/20 text-blue-400 hover:bg-blue-600/30'}`}
-                            >
-                                🌐 Official Website
-                            </a>
-                        )}
-                        {series.network && (
-                            <a
-                                href={series.officialSite || `https://www.google.com/search?q=watch ${series.Title} on ${series.network}`}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className={`px-4 py-2 rounded-lg text-sm font-bold transition-colors flex items-center gap-2
-                                    ${isRetro ? 'text-purple-400 border border-purple-500 hover:bg-purple-900/20' : 'bg-purple-600/20 text-purple-400 hover:bg-purple-600/30'}`}
-                            >
-                                📺 Watch on {series.network}
-                            </a>
-                        )}
-                    </div>
+
                 </div>
             </div>
         </div>
