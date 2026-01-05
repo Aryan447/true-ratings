@@ -21,6 +21,15 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "True Ratings",
   description: "Visualizing IMDb ratings per episode",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "TrueRatings",
+  },
+};
+
+export const viewport = {
+  themeColor: "#000000",
 };
 
 import { ThemeProvider } from "./context/ThemeContext";

@@ -2,6 +2,7 @@
 import React from "react";
 import { useLanguage } from "../context/LanguageContext";
 import { useTheme } from "../context/ThemeContext";
+import InstallPrompt from "./InstallPrompt";
 
 export default function HeaderControls() {
     const { language, toggleLanguage, t } = useLanguage();
@@ -10,6 +11,9 @@ export default function HeaderControls() {
 
     return (
         <div className="fixed top-4 right-4 z-[100] flex items-center gap-2 md:gap-4">
+            {/* Install App Prompt */}
+            <InstallPrompt />
+
             {/* Language Toggle */}
             <button
                 onClick={toggleLanguage}
