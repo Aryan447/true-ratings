@@ -9,6 +9,7 @@ import TrendingRow from "./components/TrendingRow";
 import SeriesSkeleton from "./components/Skeletons";
 import { getSeriesData, getTrendingSeries } from "./actions/getSeriesData";
 import { useLanguage } from "./context/LanguageContext";
+import HeaderControls from "./components/HeaderControls";
 import BackToTop from "./components/BackToTop";
 
 import { SeriesData, Episode, SearchResult } from "./types";
@@ -98,12 +99,8 @@ function HomeContent() {
 
   return (
     <main className="min-h-screen py-8 px-4 flex flex-col items-center relative">
-      <button
-        onClick={toggleLanguage}
-        className="fixed top-4 right-44 z-50 px-4 py-2 bg-white/10 backdrop-blur-md border border-white/20 rounded-full text-sm font-medium hover:bg-white/20 transition-colors"
-      >
-        {language === "en" ? "हिंदी" : "English"}
-      </button>
+      <HeaderControls />
+
 
       <SearchOverlay
         onSearch={handleSearch}
