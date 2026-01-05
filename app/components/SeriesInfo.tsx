@@ -1,5 +1,7 @@
+
 "use client";
 import React from "react";
+import CastRow from "./CastRow";
 import { useTheme } from "../context/ThemeContext";
 import { useLanguage } from "../context/LanguageContext";
 
@@ -24,7 +26,7 @@ export default function SeriesInfo({ series, globalBest, globalWorst }: SeriesIn
         const totalMinutes = totalEpisodes * (series.averageRuntime || 30);
         const days = Math.floor(totalMinutes / (24 * 60));
         const hours = Math.floor((totalMinutes % (24 * 60)) / 60);
-        return `${days > 0 ? `${days}d ` : ''}${hours}h`;
+        return `${days > 0 ? `${days}d ` : ''}${hours} h`;
     }, [totalEpisodes, series.averageRuntime]);
 
     if (isRetro) {
@@ -82,6 +84,10 @@ export default function SeriesInfo({ series, globalBest, globalWorst }: SeriesIn
                         )}
                     </div>
                     {/* ... (rest of retro layout) ... */}
+                    <div className="mt-8">
+                        <CastRow cast={series.cast} />
+                    </div>
+
                     <a
                         href={`https://www.imdb.com/title/${series.imdbID}`}
                         target="_blank"
@@ -121,7 +127,7 @@ export default function SeriesInfo({ series, globalBest, globalWorst }: SeriesIn
                         <img
                             src={series.Poster}
                             alt={series.Title}
-                            className={`w-full rounded-xl shadow-2xl border 
+                            className={`w-full rounded-xl shadow-2xl border
                                 ${isRetro ? 'border-red-500 sepia contrast-125' : 'border-white/10'}`}
                         />
                     </div>
@@ -129,7 +135,7 @@ export default function SeriesInfo({ series, globalBest, globalWorst }: SeriesIn
 
                 <div className="flex-1 pt-2 w-full">
                     <div className="flex flex-col md:block">
-                        <h1 className={`text-3xl md:text-5xl lg:text-6xl font-bold mb-4 tracking-tight leading-tight 
+                        <h1 className={`text-3xl md:text-5xl lg:text-6xl font-bold mb-4 tracking-tight leading-tight
                             ${isRetro ? 'text-yellow-500 font-mono tracking-widest uppercase text-shadow-retro' : 'text-white'}`}>
                             {series.Title}
                         </h1>

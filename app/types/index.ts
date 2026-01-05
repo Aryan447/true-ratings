@@ -23,6 +23,15 @@ export interface SeriesData {
     genres: string[];
     officialSite?: string;
     network?: string;
+    cast: CastMember[];
+}
+
+export interface CastMember {
+    id: number;
+    name: string;
+    character: string;
+    image: string;
+    url: string;
 }
 
 export interface SearchResult {

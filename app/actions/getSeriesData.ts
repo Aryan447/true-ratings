@@ -52,7 +52,7 @@ export async function getSeriesData(query: string): Promise<SeriesData | null> {
     try {
         console.log(`Searching TVMaze for: ${query}`);
         // 1. Fetch Metadata from TVMaze (Fast & Reliable)
-        const url = `https://api.tvmaze.com/singlesearch/shows?q=${encodeURIComponent(query)}&embed=episodes`;
+        const url = `https://api.tvmaze.com/singlesearch/shows?q=${encodeURIComponent(query)}&embed[]=episodes&embed[]=cast`;
         const res = await axios.get(url, { validateStatus: () => true });
 
         if (res.status === 404) return null;
@@ -60,6 +60,7 @@ export async function getSeriesData(query: string): Promise<SeriesData | null> {
 
         const show = res.data;
         const episodesRaw = show._embedded?.episodes || [];
+        const castRaw = show._embedded?.cast || [];
         const imdbID = show.externals?.imdb;
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const totalSeasons = Math.max(...episodesRaw.map((e: any) => e.season));
@@ -95,6 +96,16 @@ export async function getSeriesData(query: string): Promise<SeriesData | null> {
         const genres = show.genres || [];
         const officialSite = show.officialSite || "";
         const network = show.network?.name || show.webChannel?.name || "";
+
+        // Map Cast
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const cast = castRaw.map((c: any) => ({
+            id: c.person.id,
+            name: c.person.name,
+            character: c.character.name,
+            image: c.person.image?.medium || c.character.image?.medium || "",
+            url: c.person.url
+        })).slice(0, 10); // Top 10 cast members
 
         const seasonsData: { [key: number]: Episode[] } = {};
         let globalBestRating = -1;
@@ -156,7 +167,8 @@ export async function getSeriesData(query: string): Promise<SeriesData | null> {
             averageRuntime,
             genres,
             officialSite,
-            network
+            network,
+            cast
         };
 
     } catch (error) {
