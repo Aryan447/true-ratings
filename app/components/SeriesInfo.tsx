@@ -16,6 +16,17 @@ export default function SeriesInfo({ series, globalBest, globalWorst }: SeriesIn
     const { t } = useLanguage();
     const isRetro = theme === 'retro';
 
+    const totalEpisodes = React.useMemo(() => {
+        return Object.values(series.seasons).reduce((acc, season) => acc + season.length, 0);
+    }, [series.seasons]);
+
+    const bingeTime = React.useMemo(() => {
+        const totalMinutes = totalEpisodes * (series.averageRuntime || 30);
+        const days = Math.floor(totalMinutes / (24 * 60));
+        const hours = Math.floor((totalMinutes % (24 * 60)) / 60);
+        return `${days > 0 ? `${days}d ` : ''}${hours}h`;
+    }, [totalEpisodes, series.averageRuntime]);
+
     if (isRetro) {
         return (
             <div className="cinema-border p-4 md:p-8 mb-12 flex flex-col md:flex-row gap-8 items-start relative z-10 w-full max-w-6xl mx-auto bg-[#1a0505]">
@@ -35,6 +46,16 @@ export default function SeriesInfo({ series, globalBest, globalWorst }: SeriesIn
                         <span className="bg-[#8a0c0c] text-[#c5a059] px-3 py-1 font-bold text-lg border border-[#c5a059]">
                             {series.Year}
                         </span>
+                    </div>
+
+                    <div className="flex gap-4 mb-4 text-[#c5a059] text-sm font-bold uppercase tracking-widest">
+                        <span className={series.status === 'Ended' ? 'text-red-500' : 'text-green-500'}>
+                            {series.status}
+                        </span>
+                        <span>•</span>
+                        <span>{bingeTime} Binge</span>
+                        <span>•</span>
+                        <span>{series.genres?.join(", ")}</span>
                     </div>
 
                     <p className="text-[#f0e6d2] mb-6 max-w-2xl leading-relaxed text-xl italic opacity-90">
@@ -60,7 +81,7 @@ export default function SeriesInfo({ series, globalBest, globalWorst }: SeriesIn
                             </div>
                         )}
                     </div>
-
+                    {/* ... (rest of retro layout) ... */}
                     <a
                         href={`https://www.imdb.com/title/${series.imdbID}`}
                         target="_blank"
@@ -119,6 +140,25 @@ export default function SeriesInfo({ series, globalBest, globalWorst }: SeriesIn
                             </span>
                             <span>{series.totalSeasons} {t.seasonsLabel}</span>
                             <span>{series.imdbVotes} {t.votes}</span>
+                        </div>
+
+                        {/* Stats Bar */}
+                        <div className={`flex flex-wrap gap-4 mb-6 text-sm font-medium 
+                             ${isRetro ? 'text-yellow-600 font-mono' : 'text-gray-300'}`}>
+                            <div className="flex items-center gap-2">
+                                <span className={`px-2 py-0.5 rounded text-xs uppercase font-bold 
+                                    ${series.status === 'Ended' ? 'bg-red-500/20 text-red-500' : 'bg-green-500/20 text-green-500'}`}>
+                                    {series.status}
+                                </span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <span className="opacity-50">Binge:</span>
+                                <span>{bingeTime}</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <span className="opacity-50">Genres:</span>
+                                <span>{series.genres?.join(", ")}</span>
+                            </div>
                         </div>
                     </div>
 

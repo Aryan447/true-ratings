@@ -18,6 +18,9 @@ export interface SeriesData {
     seasons: { [key: number]: Episode[] };
     BestEp: { season: number; ep: Episode } | null;
     WorstEp: { season: number; ep: Episode } | null;
+    status: string;
+    averageRuntime: number;
+    genres: string[];
 }
 
 export interface SearchResult {

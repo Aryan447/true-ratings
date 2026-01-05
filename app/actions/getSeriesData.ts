@@ -90,6 +90,10 @@ export async function getSeriesData(query: string): Promise<SeriesData | null> {
         const seriesRating = show.rating?.average?.toString() || "N/A";
         const votes = "N/A";
 
+        const status = show.status || "Unknown";
+        const averageRuntime = show.averageRuntime || 30;
+        const genres = show.genres || [];
+
         const seasonsData: { [key: number]: Episode[] } = {};
         let globalBestRating = -1;
         let globalWorstRating = 11;
@@ -145,7 +149,10 @@ export async function getSeriesData(query: string): Promise<SeriesData | null> {
             totalSeasons: totalSeasons.toString(),
             seasons: seasonsData,
             BestEp: bestEp,
-            WorstEp: worstEp
+            WorstEp: worstEp,
+            status,
+            averageRuntime,
+            genres
         };
 
     } catch (error) {

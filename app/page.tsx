@@ -11,6 +11,7 @@ import { getSeriesData, getTrendingSeries } from "./actions/getSeriesData";
 import { useLanguage } from "./context/LanguageContext";
 import HeaderControls from "./components/HeaderControls";
 import BackToTop from "./components/BackToTop";
+import TopEpisodes from "./components/TopEpisodes";
 
 import { SeriesData, Episode, SearchResult } from "./types";
 
@@ -172,6 +173,8 @@ function HomeContent() {
             globalBest={globalBest}
             globalWorst={globalWorst}
           />
+
+          <TopEpisodes seasons={seasons} onSelectEpisode={setSelectedEpisode} />
 
           <RatingChart seasons={seasons} />
 
