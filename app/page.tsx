@@ -33,6 +33,8 @@ function HomeContent() {
   const [worldTrending, setWorldTrending] = useState<SearchResult[]>([]);
   const [indiaTrending, setIndiaTrending] = useState<SearchResult[]>([]);
 
+  const [selectedEpisode, setSelectedEpisode] = useState<Episode | null>(null);
+
   const { t, toggleLanguage, language } = useLanguage();
 
   // Fetch Trending Data on Mount
@@ -94,12 +96,38 @@ function HomeContent() {
     router.push(`/?q=${encodeURIComponent(title)}`);
   };
 
+  // Scroll to Season (Handles both Dropdown and Grid)
+  const handleScrollToSeason = (season: number) => {
+    const element = document.getElementById(`season-${season}`);
+    if (element) {
+      const yOffset = -100; // Offset for sticky header
+      const y = element.getBoundingClientRect().top + window.scrollY + yOffset;
+      window.scrollTo({ top: y, behavior: 'smooth' });
+    }
+  };
+
+  // Pick Random Episode
+  const handleRandomEpisode = () => {
+    if (!seasons) return;
+    const allEpisodes = Object.entries(seasons).flatMap(([s, eps]) =>
+      eps.map(e => ({ ...e, season: Number(s) }))
+    );
+    if (allEpisodes.length > 0) {
+      const randomEp = allEpisodes[Math.floor(Math.random() * allEpisodes.length)];
+      setSelectedEpisode(randomEp);
+    }
+  };
+
   // Determine if we should show the "searched" layout
   const hasSearched = !!query;
 
   return (
-    <main className="min-h-screen py-8 px-4 flex flex-col items-center relative">
-      <HeaderControls />
+    <main className="min-h-screen pt-20 pb-8 px-4 flex flex-col items-center relative">
+      <HeaderControls
+        seasons={seasons}
+        onScrollToSeason={handleScrollToSeason}
+        onRandomEpisode={Object.keys(seasons).length > 0 ? handleRandomEpisode : undefined}
+      />
 
 
       <SearchOverlay
@@ -151,6 +179,8 @@ function HomeContent() {
             seasons={seasons}
             globalBest={globalBest}
             globalWorst={globalWorst}
+            selectedEpisode={selectedEpisode}
+            onSelectEpisode={setSelectedEpisode}
           />
         </div>
       )}

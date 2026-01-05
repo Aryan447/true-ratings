@@ -7,6 +7,8 @@ interface EpisodeGridProps {
     seasons: { [key: number]: Episode[] };
     globalBest: { season: number; ep: Episode } | null;
     globalWorst: { season: number; ep: Episode } | null;
+    selectedEpisode?: Episode | null;
+    onSelectEpisode?: (episode: Episode | null) => void;
 }
 
 import { useTheme } from "../context/ThemeContext";
@@ -29,13 +31,19 @@ const getColor = (r: number, isRetro: boolean) => {
 };
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export default function EpisodeGrid({ seasons, globalBest, globalWorst }: EpisodeGridProps) {
+export default function EpisodeGrid({ seasons, globalBest, globalWorst, selectedEpisode, onSelectEpisode }: EpisodeGridProps) {
     const { theme } = useTheme();
     const { t } = useLanguage();
     const isRetro = theme === 'retro';
     const seasonRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
     const [sortBy, setSortBy] = React.useState<'default' | 'best' | 'worst'>('default');
-    const [selectedEpisode, setSelectedEpisode] = React.useState<Episode | null>(null);
+
+    // Use prop if available, otherwise local (for backward compat if needed, but we'll always pass prop)
+    // Actually simpler to just rely on prop. But if I remove line 38 I need to update references too if they differ.
+    // The previous edit added `selectedEpisode` state. I will replace it.
+
+    // NOTE: In the previous turn I added `const [selectedEpisode, setSelectedEpisode] = ...`
+    // I will remove it.
 
     const getSeasonAvg = (episodes: Episode[]) => {
         const ratings = episodes.map(e => parseFloat(e.imdbRating)).filter(r => !isNaN(r));
@@ -77,7 +85,7 @@ export default function EpisodeGrid({ seasons, globalBest, globalWorst }: Episod
             return (
                 <div
                     key={i}
-                    onClick={() => setSelectedEpisode({ ...ep, season: Number(seasonNum) })}
+                    onClick={() => onSelectEpisode?.({ ...ep, season: Number(seasonNum) })}
                     className="flex-shrink-0 w-32 bg-[#e6dcc3] text-black p-2 rounded-sm shadow-md relative group cursor-pointer hover:sepia transition-all"
                 >
                     <div className="border border-black h-full p-2 flex flex-col justify-between text-center relative">
@@ -90,7 +98,7 @@ export default function EpisodeGrid({ seasons, globalBest, globalWorst }: Episod
         }
 
         return (
-            <div key={i} className="relative group cursor-pointer" onClick={() => setSelectedEpisode({ ...ep, season: Number(seasonNum) })}>
+            <div key={i} className="relative group cursor-pointer" onClick={() => onSelectEpisode?.({ ...ep, season: Number(seasonNum) })}>
                 <div
                     className={`
                         aspect-[3/4] rounded-md flex flex-col items-center justify-end pb-2 text-center
@@ -171,6 +179,7 @@ export default function EpisodeGrid({ seasons, globalBest, globalWorst }: Episod
                         return (
                             <div
                                 key={season}
+                                id={`season-${season}`} // Added ID for scrolling
                                 className="animate-fade-in scroll-mt-24"
                                 ref={(el) => { seasonRefs.current[season] = el; }}
                             >
@@ -208,7 +217,7 @@ export default function EpisodeGrid({ seasons, globalBest, globalWorst }: Episod
                 <div className="fixed inset-0 z-[200] flex items-center justify-center px-4">
                     <div
                         className="absolute inset-0 bg-black/80 backdrop-blur-sm"
-                        onClick={() => setSelectedEpisode(null)}
+                        onClick={() => onSelectEpisode?.(null)}
                     />
                     <div
                         className={`relative z-10 w-full max-w-lg p-8 rounded-2xl shadow-2xl transform transition-all animate-fade-in
@@ -218,7 +227,7 @@ export default function EpisodeGrid({ seasons, globalBest, globalWorst }: Episod
                             }`}
                     >
                         <button
-                            onClick={() => setSelectedEpisode(null)}
+                            onClick={() => onSelectEpisode?.(null)}
                             className={`absolute top-4 right-4 p-2 rounded-full transition-colors
                                 ${isRetro
                                     ? 'text-[#c5a059] hover:bg-[#c5a059] hover:text-black border border-[#c5a059]'
