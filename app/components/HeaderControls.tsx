@@ -10,9 +10,11 @@ interface HeaderControlsProps {
     seasons?: { [key: number]: Episode[] };
     onScrollToSeason?: (season: number) => void;
     onRandomEpisode?: () => void;
+    showBack?: boolean;
+    onBack?: () => void;
 }
 
-export default function HeaderControls({ seasons, onScrollToSeason, onRandomEpisode }: HeaderControlsProps) {
+export default function HeaderControls({ seasons, onScrollToSeason, onRandomEpisode, showBack, onBack }: HeaderControlsProps) {
     const { language, toggleLanguage, t } = useLanguage();
     const { theme, toggleTheme } = useTheme();
     const isRetro = theme === "retro";
@@ -20,6 +22,22 @@ export default function HeaderControls({ seasons, onScrollToSeason, onRandomEpis
 
     return (
         <div className="fixed top-2 right-2 md:top-4 md:right-4 z-[100] flex items-center gap-2 md:gap-4 p-1 rounded-full bg-black/20 backdrop-blur-sm md:bg-transparent md:backdrop-blur-none transition-all">
+            {/* Back Button */}
+            {showBack && onBack && (
+                <button
+                    onClick={onBack}
+                    className={`p-2 rounded-full transition-all backdrop-blur-md border flex items-center justify-center mr-2
+                        ${isRetro
+                            ? "bg-black text-red-500 border-red-500 hover:bg-red-900"
+                            : "bg-white/10 text-white border-white/20 hover:bg-white/20"
+                        }`}
+                    title="Back to Home"
+                >
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 md:h-5 md:w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                    </svg>
+                </button>
+            )}
             {/* Random Episode Button */}
             {onRandomEpisode && (
                 <button

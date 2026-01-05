@@ -128,6 +128,11 @@ function HomeContent() {
         seasons={seasons}
         onScrollToSeason={handleScrollToSeason}
         onRandomEpisode={Object.keys(seasons).length > 0 ? handleRandomEpisode : undefined}
+        showBack={!!series}
+        onBack={() => {
+          setSeries(null); // Clear loaded series
+          router.push('/'); // Update URL
+        }}
       />
 
 

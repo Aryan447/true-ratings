@@ -93,6 +93,8 @@ export async function getSeriesData(query: string): Promise<SeriesData | null> {
         const status = show.status || "Unknown";
         const averageRuntime = show.averageRuntime || 30;
         const genres = show.genres || [];
+        const officialSite = show.officialSite || "";
+        const network = show.network?.name || show.webChannel?.name || "";
 
         const seasonsData: { [key: number]: Episode[] } = {};
         let globalBestRating = -1;
@@ -152,7 +154,9 @@ export async function getSeriesData(query: string): Promise<SeriesData | null> {
             WorstEp: worstEp,
             status,
             averageRuntime,
-            genres
+            genres,
+            officialSite,
+            network
         };
 
     } catch (error) {

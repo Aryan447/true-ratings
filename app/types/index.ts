@@ -21,6 +21,8 @@ export interface SeriesData {
     status: string;
     averageRuntime: number;
     genres: string[];
+    officialSite?: string;
+    network?: string;
 }
 
 export interface SearchResult {
