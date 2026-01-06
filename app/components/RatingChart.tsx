@@ -1,5 +1,6 @@
 "use client";
-import React from "react";
+import React, { useRef, useState } from "react";
+import html2canvas from "html2canvas";
 import { useTheme } from "../context/ThemeContext";
 import { useLanguage } from "../context/LanguageContext";
 import {
@@ -27,7 +28,29 @@ export default function RatingChart({ seasons, comparisonSeasons, comparisonTitl
     const { t } = useLanguage();
     const isRetro = theme === 'retro';
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const chartRef = useRef<HTMLDivElement>(null);
+    const [downloading, setDownloading] = useState(false);
+
+    const handleDownload = async () => {
+        if (!chartRef.current) return;
+        setDownloading(true);
+        try {
+            const canvas = await html2canvas(chartRef.current, {
+                backgroundColor: isRetro ? "#000000" : "#121212", // Dark bg for premium look
+                scale: 2,
+                logging: false,
+                useCORS: true
+            });
+            const link = document.createElement("a");
+            link.download = `true-ratings-chart-${Date.now()}.png`;
+            link.href = canvas.toDataURL("image/png");
+            link.click();
+        } catch (err) {
+            console.error("Download failed", err);
+        }
+        setDownloading(false);
+    };
+
     const getChartColor = (rating: number) => {
         if (isRetro) return "#c5a059";
         if (rating >= 9) return "#10b981";
@@ -93,11 +116,20 @@ export default function RatingChart({ seasons, comparisonSeasons, comparisonTitl
 
     if (isRetro) {
         return (
-            <div className="retro-box p-6 mb-12 w-full max-w-6xl mx-auto h-[400px] bg-black border-2 border-[var(--neon-green)] shadow-[0_0_15px_rgba(0,255,0,0.2)]">
-                <h3 className="text-xl font-bold mb-6 text-[#00ff00] border-b border-[#00ff00] pb-2 font-mono uppercase tracking-widest flex justify-between">
-                    <span>OSCILLOSCOPE_READING</span>
-                    <span className="animate-pulse">● LIVE</span>
-                </h3>
+            <div ref={chartRef} className="retro-box p-6 mb-12 w-full max-w-6xl mx-auto h-[400px] bg-black border-2 border-[var(--neon-green)] shadow-[0_0_15px_rgba(0,255,0,0.2)]">
+                <div className="flex justify-between items-center mb-6 border-b border-[#00ff00] pb-2">
+                    <h3 className="text-xl font-bold text-[#00ff00] font-mono uppercase tracking-widest flex items-center gap-4">
+                        <span>OSCILLOSCOPE_READING</span>
+                        <span className="animate-pulse text-sm">● LIVE</span>
+                    </h3>
+                    <button
+                        onClick={handleDownload}
+                        disabled={downloading}
+                        className="text-[#00ff00] hover:bg-[#003300] px-3 py-1 text-sm font-mono uppercase border border-[#00ff00] transition-colors"
+                    >
+                        {downloading ? "CAPTURING..." : "[ SAVE_IMG ]"}
+                    </button>
+                </div>
                 <ResponsiveContainer width="100%" height="90%">
                     <LineChart data={data}>
                         <CartesianGrid strokeDasharray="3 3" stroke="#003300" />
@@ -181,10 +213,28 @@ export default function RatingChart({ seasons, comparisonSeasons, comparisonTitl
     }
 
     return (
-        <div className="glass rounded-xl p-6 mb-12 w-full max-w-6xl mx-auto h-[400px]">
-            <h3 className="text-xl font-bold mb-6 text-white border-b border-white/10 pb-2">
-                Rating Trend
-            </h3>
+        <div ref={chartRef} className="glass rounded-xl p-6 mb-12 w-full max-w-6xl mx-auto h-[400px] flex flex-col">
+            <div className="flex justify-between items-center mb-6 border-b border-white/10 pb-2">
+                <h3 className="text-xl font-bold text-white">
+                    Rating Trend
+                </h3>
+                <button
+                    onClick={handleDownload}
+                    disabled={downloading}
+                    className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-xs md:text-sm font-medium text-gray-300 hover:text-white transition-colors border border-white/5"
+                >
+                    {downloading ? (
+                        <span className="animate-pulse">Saving...</span>
+                    ) : (
+                        <>
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                            </svg>
+                            Download Chart
+                        </>
+                    )}
+                </button>
+            </div>
             <ResponsiveContainer width="100%" height="90%">
                 <LineChart data={data}>
                     <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
