@@ -5,6 +5,7 @@ import CastRow from "./CastRow";
 import { useTheme } from "../context/ThemeContext";
 import { useLanguage } from "../context/LanguageContext";
 import { useWatchlist } from "../hooks/useWatchlist";
+import { useToast } from "../context/ToastContext";
 
 import { SeriesData, Episode } from "../types";
 
@@ -20,6 +21,7 @@ export default function SeriesInfo({ series, globalBest, globalWorst, onCompare 
     const { t } = useLanguage();
     const isRetro = theme === 'retro';
     const { addToWatchlist, removeFromWatchlist, isInWatchlist } = useWatchlist();
+    const { showToast } = useToast();
 
     const totalEpisodes = React.useMemo(() => {
         return Object.values(series.seasons).reduce((acc, season) => acc + season.length, 0);
@@ -249,7 +251,7 @@ export default function SeriesInfo({ series, globalBest, globalWorst, onCompare 
                         <button
                             onClick={() => {
                                 navigator.clipboard.writeText(window.location.href);
-                                alert(t.linkCopied);
+                                showToast(t.linkCopied, "success");
                             }}
                             className={`px-6 py-3 rounded-lg font-bold transition-colors flex items-center gap-2
                                 ${isRetro
@@ -274,6 +276,7 @@ export default function SeriesInfo({ series, globalBest, globalWorst, onCompare 
                                         rating: series.imdbRating,
                                         poster: series.Poster
                                     });
+                                    showToast("Added to Watchlist", "success");
                                 }
                             }}
                             className={`px-6 py-3 rounded-lg font-bold transition-colors flex items-center gap-2

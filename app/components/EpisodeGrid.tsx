@@ -36,7 +36,7 @@ export default function EpisodeGrid({ seasons, globalBest, globalWorst, selected
     const { t } = useLanguage();
     const isRetro = theme === 'retro';
     const seasonRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
-    const [sortBy, setSortBy] = React.useState<'default' | 'best' | 'worst'>('default');
+    const [sortBy, setSortBy] = React.useState<'default' | 'best' | 'worst' | 'newest' | 'oldest'>('default');
     const [filterQuery, setFilterQuery] = React.useState("");
 
     // Use prop if available, otherwise local (for backward compat if needed, but we'll always pass prop)
@@ -78,9 +78,22 @@ export default function EpisodeGrid({ seasons, globalBest, globalWorst, selected
         if (sortBy === 'default') return filtered; // Just filtered, kept in default order (which is usually chrono per season, but flattened here)
 
         return filtered.sort((a, b) => {
-            const ra = parseFloat(a.imdbRating) || 0;
-            const rb = parseFloat(b.imdbRating) || 0;
-            return sortBy === 'best' ? rb - ra : ra - rb;
+            if (sortBy === 'best' || sortBy === 'worst') {
+                const ra = parseFloat(a.imdbRating) || 0;
+                const rb = parseFloat(b.imdbRating) || 0;
+                return sortBy === 'best' ? rb - ra : ra - rb;
+            }
+            if (sortBy === 'newest') {
+                // Higher season first, then higher episode
+                if (a.season !== b.season) return (b.season || 0) - (a.season || 0);
+                return Number(b.Episode) - Number(a.Episode);
+            }
+            if (sortBy === 'oldest') {
+                // Lower season first, then lower episode
+                if (a.season !== b.season) return (a.season || 0) - (b.season || 0);
+                return Number(a.Episode) - Number(b.Episode);
+            }
+            return 0;
         });
     }, [sortBy, seasons, filterQuery]);
 
@@ -147,18 +160,18 @@ export default function EpisodeGrid({ seasons, globalBest, globalWorst, selected
             {/* Controls Bar: Sort & Filter */}
             <div className="flex flex-col md:flex-row justify-between items-center mb-8 gap-4 px-4 bg-white/5 p-4 rounded-2xl backdrop-blur-md border border-white/5">
                 {/* Sort Controls */}
-                <div className="flex gap-2 bg-black/40 p-1 rounded-full border border-white/10">
-                    {(['default', 'best', 'worst'] as const).map((mode) => (
+                <div className="flex gap-2 bg-black/40 p-1 rounded-full border border-white/10 overflow-x-auto max-w-full">
+                    {(['default', 'best', 'worst', 'newest', 'oldest'] as const).map((mode) => (
                         <button
                             key={mode}
                             onClick={() => setSortBy(mode)}
-                            className={`px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider transition-all
+                            className={`px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider transition-all whitespace-nowrap
                                 ${sortBy === mode
                                     ? (isRetro ? 'bg-yellow-500 text-black border-2 border-red-500' : 'bg-white text-black')
                                     : (isRetro ? 'text-yellow-500 hover:text-yellow-300' : 'text-gray-400 hover:text-white hover:bg-white/10')}
                             `}
                         >
-                            {mode === 'default' ? t.season : (mode === 'best' ? 'Top Rated' : 'Lowest Rated')}
+                            {mode === 'default' ? t.season : mode}
                         </button>
                     ))}
                 </div>
